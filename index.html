@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>힘의 3요소 인포그래픽</title>
+    <!-- Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter 폰트 (Tailwind 기본 폰트) --><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Inter 폰트 적용 */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* 커스텀 화살표 스타일 */
+        .arrow {
+            position: relative;
+            background-color: #3b82f6; /* bg-blue-600 */
+            height: 8px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .arrow::after {
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 12px solid #3b82f6; /* bg-blue-600 */
+            transition: border-color 0.3s ease;
+        }
+
+        /* 작용점 클릭 영역 스타일 */
+        #application-box {
+            position: relative;
+            cursor: crosshair;
+            background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+                              linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        /* 작용점 포인터 */
+        #application-point {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: #3b82f6; /* 파란색 둥근 점 */
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+            transform: translate(-50%, -50%);
+            transition: all 0.1s ease;
+            z-index: 10; /* 화살표 위에 표시되도록 */
+        }
+        /* 작용점 화살표 */
+        #application-arrow {
+            position: absolute;
+            transform-origin: left center; /* 회전축을 왼쪽 중앙으로 설정 */
+            background-color: #ef4444; /* bg-red-500 */
+            height: 8px;
+            border-radius: 4px;
+            width: 80px; /* 기본 너비 */
+            transition: transform 0.1s ease; /* 위치 변경 시 transition 제거, 회전만 적용 */
+            cursor: grab; /* 드래그 가능함을 표시 */
+        }
+        /* 작용점 화살표 머리 (몸통과 동일 색상) */
+        #application-arrow::after {
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 12px solid #ef4444; /* bg-red-500 */
+            transition: border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen py-12 px-4">
+
+    <main class="max-w-6xl w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+        <header class="p-8 md:p-12 bg-gray-50 border-b border-gray-200">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center">힘의 3요소</h1>
+            <p class="text-lg text-gray-600 text-center mt-3 max-w-2xl mx-auto">
+                힘은 물체의 운동 상태나 모양을 변화시키는 원인입니다. 힘을 정확히 기술하기 위해서는 3가지 요소가 필요합니다.
+            </p>
+        </header>
+
+        <!-- 인포그래픽 카드 섹션 --><div class="grid grid-cols-1 md:grid-cols-3 gap-0">
+
+            <!-- 1. 힘의 크기 (Magnitude) --><div class="p-6 md:p-8 border-b md:border-b-0 md:border-r border-gray-200">
+                <h2 class="text-2xl font-semibold text-blue-700 mb-4">1. 힘의 크기 (Magnitude)</h2>
+                <p class="text-gray-700 mb-6 leading-relaxed">
+                    힘의 세기를 나타냅니다. (단위: N, 뉴턴)
+                    <br>
+                    인포그래픽에서는 보통 <strong class="font-medium text-gray-900">화살표의 길이</strong>로 크기를 표현합니다.
+                </p>
+                <!-- 인터랙티브 그래픽: 크기 --><div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center p-4">
+                    <div id="magnitude-arrow" class="arrow" style="width: 120px;"></div>
+                </div>
+                <!-- 컨트롤러: 크기 --><div class="mt-6">
+                    <label for="magnitude-slider" class="block text-sm font-medium text-gray-700 mb-2">크기 조절 (50N ~ 200N)</label>
+                    <input id="magnitude-slider" type="range" min="50" max="200" value="120" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                </div>
+            </div>
+
+            <!-- 2. 힘의 방향 (Direction) --><div class="p-6 md:p-8 border-b md:border-b-0 md:border-r border-gray-200">
+                <h2 class="text-2xl font-semibold text-green-700 mb-4">2. 힘의 방향 (Direction)</h2>
+                <p class="text-gray-700 mb-6 leading-relaxed">
+                    힘이 작용하는 쪽을 나타냅니다.
+                    <br>
+                    인포그래픽에서는 <strong class="font-medium text-gray-900">화살표의 머리</strong>가 가리키는 쪽으로 방향을 표현합니다.
+                </p>
+                <!-- 인터랙티브 그래픽: 방향 --><div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center p-4">
+                    <!-- SVG를 사용하여 회전 제어 --><svg id="direction-arrow-svg" width="150" height="150" viewBox="0 0 150 150" class="transition-transform duration-300 ease-in-out">
+                        <line x1="25" y1="75" x2="115" y2="75" stroke="#15803d" stroke-width="8" stroke-linecap="round" />
+                        <path d="M110 60 L 130 75 L 110 90" fill="none" stroke="#15803d" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <!-- 컨트롤러: 방향 --><div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">방향 조절</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button data-angle="0" class="direction-btn bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">오른쪽 (0°)</button>
+                        <button data-angle="-90" class="direction-btn bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">위쪽 (-90°)</button>
+                        <button data-angle="180" class="direction-btn bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">왼쪽 (180°)</button>
+                        <button data-angle="90" class="direction-btn bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">아래쪽 (90°)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. 힘의 작용점 (Point of Application) --><div class="p-6 md:p-8">
+                <h2 class="text-2xl font-semibold text-red-700 mb-4">3. 힘의 작용점</h2>
+                <p class="text-gray-700 mb-6 leading-relaxed">
+                    힘이 물체에 실제로 작용하는 지점입니다.
+                    <br>
+                    <strong class="font-medium text-gray-900">화살표가 시작되는 지점</strong>으로 작용점을 표현합니다. (상자를 클릭, 화살표를 드래그)
+                </p>
+                <!-- 인터랙티브 그래픽: 작용점 --><div id="application-box" class="h-40 bg-gray-100 rounded-lg border-2 border-gray-300">
+                    <!-- 자바스크립트로 포인터와 화살표 추가 --><div id="application-point" style="left: 50%; top: 50%;"></div>
+                    <div id="application-arrow" class="arrow" style="left: 50%; top: 50%; background-color: #ef4444; transform: rotate(0deg);">
+                    </div>
+                </div>
+                <!-- 컨트롤러: 작용점 (클릭 안내) --><div class="mt-6">
+                    <p class="text-sm font-medium text-gray-700 text-center">
+                        상자 안을 클릭: 작용점 변경<br>
+                        화살표를 드래그: 방향 변경
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="mt-8 text-gray-500 text-sm font-medium">
+        ⓒ 2025. 송쌤과학 All rights reserved.
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- 1. 힘의 크기 ---
+            const magnitudeSlider = document.getElementById('magnitude-slider');
+            const magnitudeArrow = document.getElementById('magnitude-arrow');
+
+            magnitudeSlider.addEventListener('input', (e) => {
+                magnitudeArrow.style.width = `${e.target.value}px`;
+            });
+
+            // --- 2. 힘의 방향 ---
+            const directionBtns = document.querySelectorAll('.direction-btn');
+            const directionArrowSvg = document.getElementById('direction-arrow-svg');
+
+            directionBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const angle = btn.getAttribute('data-angle');
+                    directionArrowSvg.style.transform = `rotate(${angle}deg)`;
+                });
+            });
+
+            // --- 3. 힘의 작용점 ---
+            const applicationBox = document.getElementById('application-box');
+            const applicationPoint = document.getElementById('application-point');
+            const applicationArrow = document.getElementById('application-arrow');
+
+            let isDraggingArrow = false;
+            let currentAngle = 0; // 현재 화살표 각도 저장
+
+            // 상자 클릭: 작용점 위치 변경
+            applicationBox.addEventListener('click', (e) => {
+                isDraggingArrow = false; // 드래그 중이 아님
+
+                // 이벤트 타겟이 화살표(자신 또는 자식 요소)이면 위치 변경 방지
+                if (e.target === applicationArrow || applicationArrow.contains(e.target)) {
+                    return;
+                }
+
+                const rect = applicationBox.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // 포인터와 화살표 위치 업데이트
+                applicationPoint.style.left = `${x}px`;
+                applicationPoint.style.top = `${y}px`;
+                applicationArrow.style.left = `${x}px`;
+                applicationArrow.style.top = `${y}px`;
+
+                // [FIX]
+                // 위치 변경 시, 이전에 설정된 각도(currentAngle)가
+                // 초기화되지 않고 유지되도록 관련 코드를 제거했습니다.
+                // const boxWidth = applicationBox.offsetWidth;
+                // if (x > boxWidth * 0.6) {
+                //     currentAngle = 180;
+                // } else {
+                //     currentAngle = 0;
+                // }
+                // applicationArrow.style.transform = `rotate(${currentAngle}deg)`;
+            });
+
+            // --- 화살표 드래그 로직 ---
+
+            // 1. 화살표에서 마우스 누르기: 드래그 시작
+            applicationArrow.addEventListener('mousedown', (e) => {
+                e.preventDefault(); // 기본 드래그 동작 방지
+                e.stopPropagation(); // 상자 클릭 이벤트 전파 중단
+                isDraggingArrow = true;
+                applicationArrow.style.cursor = 'grabbing'; // 잡는 중 커서
+            });
+
+            // 2. 문서 전체에서 마우스 이동: 각도 계산
+            document.addEventListener('mousemove', (e) => {
+                if (!isDraggingArrow) return; // 드래그 중이 아니면 반환
+
+                // 파란색 점(회전축)의 화면상 좌표 가져오기
+                const pointRect = applicationPoint.getBoundingClientRect();
+                const pivotX = pointRect.left + (pointRect.width / 2);
+                const pivotY = pointRect.top + (pointRect.height / 2);
+
+                // 마우스 위치와 회전축 사이의 각도 계산
+                const deltaX = e.clientX - pivotX;
+                const deltaY = e.clientY - pivotY;
+                const angleRad = Math.atan2(deltaY, deltaX); // 라디안
+                currentAngle = angleRad * (180 / Math.PI); // 디그리
+
+                // 화살표에 회전 적용
+                applicationArrow.style.transform = `rotate(${currentAngle}deg)`;
+            });
+
+            // 3. 문서 전체에서 마우스 떼기: 드래그 종료
+            document.addEventListener('mouseup', () => {
+                if (isDraggingArrow) {
+                    isDraggingArrow = false;
+                    applicationArrow.style.cursor = 'grab'; // 원래 커서로 복귀
+                }
+            });
+
+        });
+    </script>
+
+</body>
+</html>
