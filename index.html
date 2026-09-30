@@ -1,265 +1,1270 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>힘의 3요소 인포그래픽</title>
-    <!-- Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter 폰트 (Tailwind 기본 폰트) --><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* Inter 폰트 적용 */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* 커스텀 화살표 스타일 */
-        .arrow {
-            position: relative;
-            background-color: #3b82f6; /* bg-blue-600 */
-            height: 8px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-        .arrow::after {
-            content: '';
-            position: absolute;
-            right: -2px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 0;
-            height: 0;
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-left: 12px solid #3b82f6; /* bg-blue-600 */
-            transition: border-color 0.3s ease;
-        }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="version" content="2.0">
+<meta name="description" content="위에서 내려다본 스윙 도어에 힘 화살표를 직접 그려 밀어 보며, 힘의 크기·방향·작용점이 달라지면 힘의 효과가 어떻게 달라지는지 알아보는 중학교 과학 가상실험실">
+<meta property="og:title" content="송쌤과학 가상실험실 | 힘의 3요소">
+<meta property="og:description" content="화살표의 시작점·길이·방향을 바꿔 문을 밀어 보세요 — 무엇을 바꾸면 문이 더 크게 열릴까요?">
+<meta property="og:type" content="website">
+<meta name="theme-color" id="metaTheme" content="#101b28">
+<title>송쌤과학 가상실험실 | 힘의 3요소</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%23101b28'/%3E%3Cpath%20d='M12%2048%2044%2030'%20stroke='%23c79a63'%20stroke-width='7'%20stroke-linecap='round'/%3E%3Cpath%20d='M38%2034%2030%2012m-7%207%207-7%207%207'%20fill='none'%20stroke='%23ff7b5c'%20stroke-width='5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script>(function(){try{var t=localStorage.getItem('ssv-theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}})();</script>
+<style>
+/* ═══════ 송쌤과학 중1 가상실험실 공통 껍데기 (체험버전 V2.11) ═══════
+   ① 테마와 무관한 토큰 → ② 테마 토큰(두 블록, 같은 목록) → ③ 마감 기본층 → ④ 껍데기 부품
+   실험실마다 달라지는 장면 토큰·배치는 각 실험실 src/app.css에 둔다. */
+:root{
+  --font-ui:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --font-title:var(--font-ui);
+  --sp-1:4px;--sp-2:8px;--sp-3:12px;--sp-4:16px;--sp-5:20px;--sp-6:24px;--sp-8:32px;--sp-10:40px;
+  --r-1:6px;--r-2:10px;--r-3:16px;--r-full:999px;        /* 작은 컨트롤 6 · 버튼·입력 10 · 패널·장면 16 · 상태 알약 full */
+  --control-h:36px;--icon-size:18px;
+  --dur-fast:140ms;--dur-ui:260ms;--dur-ui-out:180ms;--dur-layout:360ms;
+  --ease-out:cubic-bezier(.2,0,0,1);--ease-in:cubic-bezier(.4,0,1,1);--lift:8px;
+  --top-h:56px;--strip-h:0px;
+  --light-angle:215deg;                                   /* 주 광원: 왼쪽 위 — UI 그림자는 오른쪽 아래로 */
+  --brand-pink:#FFB7B2;--brand-ink:#3b1d1b;
+  --yt-red:#ff0033;--yt-play:#ffffff;--ig-1:#feda75;--ig-2:#fa7e1e;--ig-3:#d62976;--ig-4:#4f5bd5;
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --surface-0:#0b131d;--surface-1:#101b28;--surface-2:#182636;
+  --stage:#0e1a27;--stage-2:#132233;
+  --text-1:#e8eff5;--text-2:#b0c0cf;--text-3:#8ea2b4;--line-1:#223445;--line-2:#34495d;
+  --accent:#6fd3c1;--accent-strong:#9be7d9;--accent-soft:#163a3b;--on-accent:#08131c;--focus:#9be7d9;--scrim:#02070dcc;
+  --danger:#ff9d8a;--danger-soft:#3b2322;--ok:#7ed7a0;--ok-soft:#1d3b32;--warn:#ffcf5c;--warn-soft:#3f3822;
+  --data-1:#E69F00;--data-2:#56B4E9;--data-3:#2fbf92;--data-4:#CC79A7;
+  --shadow-color:215 45% 3%;
+  --shadow-1:0 0 #0000;
+  --shadow-2:0 12px 32px -12px hsl(var(--shadow-color) / .6);
+  --shadow-3:0 24px 64px -16px hsl(var(--shadow-color) / .7);
+  --edge-hi:inset 0 1px 0 hsl(0 0% 100% / .06);
+}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --surface-0:#edf1f4;--surface-1:#fbfcfd;--surface-2:#e3eaf0;
+  --stage:#f5f8fa;--stage-2:#e9eff4;
+  --text-1:#132a3b;--text-2:#44596b;--text-3:#566b7e;--line-1:#d3dde5;--line-2:#b2c3d0;
+  --accent:#0f6b60;--accent-strong:#0a5148;--accent-soft:#d5eeea;--on-accent:#ffffff;--focus:#0a5148;--scrim:#0b1a2680;
+  --danger:#b3261e;--danger-soft:#fbe3df;--ok:#1d7a47;--ok-soft:#d8f0e2;--warn:#8a5a00;--warn-soft:#fff2c8;
+  --data-1:#B07400;--data-2:#0072B2;--data-3:#007A5A;--data-4:#A6508A;
+  --shadow-color:210 30% 22%;
+  --shadow-1:0 1px 2px hsl(var(--shadow-color) / .08);
+  --shadow-2:0 1px 2px hsl(var(--shadow-color) / .06),0 10px 28px -10px hsl(var(--shadow-color) / .22);
+  --shadow-3:0 2px 6px hsl(var(--shadow-color) / .08),0 24px 56px -16px hsl(var(--shadow-color) / .30);
+  --edge-hi:0 0 #0000;
+}
+/* ③ 마감 기본층 (§6.8) */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;accent-color:var(--accent)}
+body{margin:0;background:var(--surface-0);color:var(--text-1);font:400 15px/1.65 var(--font-ui);font-synthesis:none;word-break:keep-all;overflow-wrap:break-word}
+:root[data-theme="dark"] body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+h1,h2,h3,h4{text-wrap:balance;margin:0}
+p,li,figcaption{text-wrap:pretty}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{font-size:max(16px,1em)}
+button,a,[role="button"]{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+::selection{background:color-mix(in oklab,var(--accent) 30%,transparent)}
+input,textarea{caret-color:var(--accent)}
+*{scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+.scroll{overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.num{font-variant-numeric:tabular-nums}
+.unit{white-space:nowrap}
+img,canvas,video{display:block;max-width:100%}
+[hidden]{display:none!important}
+dialog:not([open]){display:none}
+[popover]:not(:popover-open){display:none}
+.sr-only{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:8px;top:-60px;z-index:90;padding:8px 12px;border-radius:var(--r-1);background:var(--accent);color:var(--on-accent);text-decoration:none;font-weight:600}
+.skip:focus{top:8px}
+kbd{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;border:1px solid var(--line-2);border-bottom-width:2px;border-radius:5px;padding:3px 5px;color:var(--text-1);background:var(--surface-0)}
+svg.ic{width:var(--icon-size);height:var(--icon-size);fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.muted{color:var(--text-2)}
+/* ⑤ 사용자 설정 존중 */
+@media (prefers-reduced-motion:reduce){:root{--lift:0px}}
+@media (prefers-contrast:more){:root[data-theme]{--line-1:var(--line-2);--text-3:var(--text-2)}}
+@media (prefers-reduced-transparency:reduce){.glass{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:var(--surface-1)!important}}
 
-        /* 작용점 클릭 영역 스타일 */
-        #application-box {
-            position: relative;
-            cursor: crosshair;
-            background-image: linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-                              linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-        /* 작용점 포인터 */
-        #application-point {
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background-color: #3b82f6; /* 파란색 둥근 점 */
-            border-radius: 50%;
-            border: 2px solid white;
-            box-shadow: 0 0 5px rgba(0,0,0,0.3);
-            transform: translate(-50%, -50%);
-            transition: all 0.1s ease;
-            z-index: 10; /* 화살표 위에 표시되도록 */
-        }
-        /* 작용점 화살표 */
-        #application-arrow {
-            position: absolute;
-            transform-origin: left center; /* 회전축을 왼쪽 중앙으로 설정 */
-            background-color: #ef4444; /* bg-red-500 */
-            height: 8px;
-            border-radius: 4px;
-            width: 80px; /* 기본 너비 */
-            transition: transform 0.1s ease; /* 위치 변경 시 transition 제거, 회전만 적용 */
-            cursor: grab; /* 드래그 가능함을 표시 */
-        }
-        /* 작용점 화살표 머리 (몸통과 동일 색상) */
-        #application-arrow::after {
-            content: '';
-            position: absolute;
-            right: -2px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 0;
-            height: 0;
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-left: 12px solid #ef4444; /* bg-red-500 */
-            transition: border-color 0.3s ease;
-        }
-    </style>
+/* ═══ 몸체: 상단 막대 / 본문 / (휴대폰) 브랜드 띠 ═══ */
+html,body{height:100%}
+body{height:100dvh;display:grid;grid-template-rows:var(--top-h) minmax(0,1fr) var(--strip-h);overflow:hidden}
+.topbar{position:relative;z-index:30;display:flex;align-items:center;gap:12px;padding:0 10px 0 16px;background:var(--surface-1);border-bottom:1px solid var(--line-1);min-width:0}
+.brand{display:flex;align-items:center;gap:8px;white-space:nowrap;flex:none}
+.brandmark{width:27px;height:27px;border-radius:var(--r-2);background:var(--brand-pink);color:var(--brand-ink);display:grid;place-items:center;flex:none}
+.brandmark svg.ic{width:17px;height:17px;stroke-width:2}
+.word{font:700 13px/1 var(--font-ui);color:var(--text-1)}
+.vdiv{width:1px;height:15px;background:var(--line-2);flex:none}
+.social{position:relative;width:34px;height:34px;display:grid;place-items:center;border-radius:var(--r-1);color:var(--text-2);text-decoration:none;flex:none}
+.social::before{content:'';position:absolute;inset:-5px}
+.social svg{width:21px;height:21px}
+.social .yt-body{fill:currentColor}.social .yt-play{fill:var(--surface-1)}
+.social .ig-line{fill:none;stroke:currentColor;stroke-width:2}.social .ig-dot{fill:currentColor}
+.social:is(:hover,:focus-visible) .yt-body{fill:var(--yt-red)}.social:is(:hover,:focus-visible) .yt-play{fill:var(--yt-play)}
+.social:is(:hover,:focus-visible) .ig-line{stroke:url(#ig-grad)}.social:is(:hover,:focus-visible) .ig-dot{fill:var(--ig-3)}
+.top-title{display:flex;align-items:baseline;gap:10px;min-width:0;flex:1 1 auto}
+.top-title h1{font:700 15px/1.2 var(--font-ui);color:var(--text-1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.top-title .std{font:500 12px/1 var(--font-ui);color:var(--text-2);white-space:nowrap}
+.utilities{margin-left:auto;display:flex;align-items:center;gap:2px;flex:none}
+.hsep{width:1px;height:20px;background:var(--line-1);margin:0 4px}
+.icon-btn{position:relative;width:36px;height:36px;display:grid;place-items:center;border:0;border-radius:var(--r-2);background:transparent;color:var(--text-2);cursor:pointer;transition:background var(--dur-fast),color var(--dur-fast),transform var(--dur-fast)}
+.icon-btn::before{content:'';position:absolute;inset:-4px}
+.icon-btn svg.ic{width:20px;height:20px}
+.icon-btn:active{transform:scale(.94)}
+@media (hover:hover) and (pointer:fine){.icon-btn:hover,.social:hover{background:var(--surface-2);color:var(--text-1)}}
+main.app{position:relative;min-width:0;min-height:0;overflow:hidden;outline:none}
+
+/* ═══ 버튼 계층: Primary / Secondary / Ghost / Icon ═══ */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--control-h);padding:0 14px;border:1px solid var(--line-2);border-radius:var(--r-2);background:var(--surface-1);color:var(--text-1);font:600 13px/1.2 var(--font-ui);cursor:pointer;white-space:nowrap;transition:background var(--dur-fast),border-color var(--dur-fast),transform var(--dur-fast)}
+.btn::before{content:'';position:absolute;inset:-4px 0}
+.btn svg.ic{width:17px;height:17px}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:700}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--text-2)}
+.btn.small{min-height:32px;padding:0 10px;font-size:13px}
+.btn.wide{width:100%}
+.btn[aria-disabled="true"],.btn:disabled{opacity:.5;cursor:not-allowed}
+@media (hover:hover) and (pointer:fine){
+  .btn:not(.primary):not(:disabled):hover{background:var(--surface-2)}
+  .btn.primary:not(:disabled):hover{background:var(--accent-strong);border-color:var(--accent-strong)}
+  .btn.ghost:hover{color:var(--text-1)}
+}
+/* 칩 · 세그먼트 */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{position:relative;display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:0 11px;border:1px solid var(--line-2);border-radius:var(--r-full);background:transparent;color:var(--text-1);font:500 13px/1 var(--font-ui);cursor:pointer;white-space:nowrap}
+.chip::before{content:'';position:absolute;inset:-6px -2px}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--text-1);font-weight:700}
+.chip[aria-pressed="true"]::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);order:-1}
+.seg{display:inline-grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:2px;padding:3px;border-radius:var(--r-2);background:var(--surface-2);border:1px solid var(--line-1)}
+.seg button{position:relative;min-height:30px;padding:0 12px;border:0;border-radius:7px;background:transparent;color:var(--text-2);font:600 13px/1.2 var(--font-ui);cursor:pointer;white-space:nowrap}
+.seg button::before{content:'';position:absolute;inset:-6px -1px}
+.seg button[aria-pressed="true"],.seg button[aria-selected="true"]{background:var(--surface-1);color:var(--text-1);font-weight:800;box-shadow:var(--edge-hi),0 1px 2px hsl(var(--shadow-color) / .18)}
+@media (hover:hover) and (pointer:fine){.chip:hover{border-color:var(--text-2)}.seg button:not([aria-pressed="true"]):not([aria-selected="true"]):hover{color:var(--text-1)}}
+
+/* 결과 저장 — 장면 모서리의 카메라 (Ghost/Icon 계층) */
+.save-btn{position:relative;display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 11px 0 9px;border:1px solid var(--line-2);border-radius:var(--r-2);background:color-mix(in oklab,var(--surface-1) 88%,transparent);color:var(--text-1);font:600 13px/1 var(--font-ui);cursor:pointer;white-space:nowrap;box-shadow:var(--edge-hi)}
+.save-btn::before{content:'';position:absolute;inset:-5px}
+.save-btn svg.ic{width:18px;height:18px}
+.save-btn[aria-busy="true"]{opacity:.6;cursor:progress}
+@media (hover:hover) and (pointer:fine){.save-btn:hover{background:var(--surface-2)}}
+.shutter{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;animation:shutter .32s var(--ease-out);z-index:5;border-radius:inherit}
+@keyframes shutter{0%{opacity:.55}100%{opacity:0}}
+
+/* 판독값 — 라벨 · 큰 수 · 작은 단위 */
+.readout{display:flex;align-items:baseline;gap:4px;font-variant-numeric:tabular-nums}
+.readout .v{font:800 26px/1.05 var(--font-ui);letter-spacing:-.02em;color:var(--text-1)}
+.readout .u{font:600 13px/1 var(--font-ui);color:var(--text-2)}
+.lbl{font:600 12px/1.4 var(--font-ui);color:var(--text-2)}
+
+/* 슬라이더 (네이티브 range + accent-color, 트랙 4px 이상 · 터치 44px) */
+input[type="range"]{width:100%;height:44px;margin:0;background:transparent;cursor:pointer;touch-action:pan-y}
+
+/* ═══ 대화상자 · 드로어 · 토스트 ═══ */
+dialog{border:0;padding:0;color:var(--text-1);background:var(--surface-1)}
+dialog::backdrop{background:var(--scrim)}
+.modal{width:min(620px,calc(100vw - 32px));max-height:min(86dvh,760px);border-radius:var(--r-3);box-shadow:var(--edge-hi),var(--shadow-3)}
+.modal[open]{display:flex;flex-direction:column}
+.modal.narrow{width:min(420px,calc(100vw - 32px))}
+.drawer{margin:0 0 0 auto;height:100dvh;max-height:100dvh;width:clamp(360px,32vw,460px);border-left:1px solid var(--line-1);box-shadow:var(--shadow-3)}
+.drawer[open]{display:flex;flex-direction:column}
+.drawer::backdrop{background:color-mix(in oklab,var(--scrim) 55%,transparent)}
+.dialog-head{display:flex;align-items:center;gap:8px;padding:12px 10px 12px 20px;border-bottom:1px solid var(--line-1);flex:none}
+.dialog-head h2{font:800 18px/1.3 var(--font-ui);margin-right:auto}
+.dialog-body{padding:16px 20px 22px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+:is(dialog,[popover]).sheet{opacity:0;transform:translateY(var(--lift));transition:opacity var(--dur-ui-out) var(--ease-in),transform var(--dur-ui-out) var(--ease-in),overlay var(--dur-ui-out) allow-discrete,display var(--dur-ui-out) allow-discrete}
+:is(dialog[open],[popover]:popover-open).sheet{opacity:1;transform:none;transition-duration:var(--dur-ui);transition-timing-function:var(--ease-out)}
+@starting-style{:is(dialog[open],[popover]:popover-open).sheet{opacity:0;transform:translateY(var(--lift))}}
+.drawer.sheet{transform:translateX(24px)}
+.drawer.sheet[open]{transform:none}
+@starting-style{.drawer.sheet[open]{transform:translateX(24px)}}
+@media (prefers-reduced-motion:reduce){.drawer.sheet,.drawer.sheet[open]{transform:none}}
+.help-doc h3{font:700 15px/1.4 var(--font-ui);margin:18px 0 6px;color:var(--text-1)}
+.help-doc h3:first-child{margin-top:0}
+.help-doc p,.help-doc li{font-size:15px;line-height:1.7;color:var(--text-1)}
+.help-doc ul,.help-doc ol{margin:0;padding-left:20px}
+.help-doc li+li{margin-top:4px}
+.help-doc .keys{line-height:2.2}
+.brandblock{margin-top:16px;padding:12px 14px;border-radius:var(--r-2);background:var(--surface-2);font-size:13px;line-height:1.8;color:var(--text-1)}
+.brandblock a{color:var(--text-1)}
+.ver-line{margin-top:10px;font:500 12px/1 var(--font-ui);color:var(--text-2)}
+/* 원리 카드 */
+.tcard{padding:0 0 18px;border-bottom:1px solid var(--line-1);margin-bottom:18px}
+.tcard:last-child{border-bottom:0;margin-bottom:0}
+.tcard h3{font:800 18px/1.35 var(--font-ui);margin:0 0 8px}
+.tcard figure{margin:0 0 10px;border-radius:var(--r-2);background:var(--stage);border:1px solid var(--line-1);overflow:hidden}
+.tcard figure svg{display:block;width:100%;height:auto}
+.tcard .def{font:700 15px/1.6 var(--font-ui);margin-bottom:6px}
+.tcard p{font-size:15px;line-height:1.7;color:var(--text-1)}
+.tcard p+p{margin-top:6px}
+.tcard .link{margin-top:10px;padding:10px 12px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 var(--r-1) var(--r-1) 0;font-size:15px;line-height:1.65}
+.toast{position:fixed;left:50%;bottom:calc(20px + var(--strip-h) + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:10px;max-width:min(360px,calc(100vw - 24px));padding:10px 14px;border-radius:var(--r-2);background:var(--surface-1);border:1px solid var(--line-2);box-shadow:var(--edge-hi),var(--shadow-2);font:500 13px/1.5 var(--font-ui);color:var(--text-1)}
+.toast.error{border-color:var(--danger)}
+.toast .toast-x{flex:none;width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:var(--r-1);background:transparent;color:var(--text-2);cursor:pointer}
+.textlink{display:inline-flex;align-items:center;gap:6px;color:var(--text-1);font:600 13px/1 var(--font-ui);text-decoration:underline;text-underline-offset:3px;padding:10px 0}
+.textlink .yt-ic{width:20px;height:20px;stroke:none}
+.textlink .yt-ic .yt-body{fill:var(--yt-red)}.textlink .yt-ic .yt-play{fill:#fff}
+
+/* ═══ 휴대폰 세로(≤600px): 브랜드·채널은 아래 브랜드 띠로, 위에는 제목 + 고정 세트 ═══ */
+@media (max-width:600px){
+  :root{--top-h:52px;--strip-h:40px}
+  .topbar{padding:0 4px 0 12px;gap:6px}
+  .topbar>.vdiv{display:none}
+  .top-title .std{display:none}
+  .top-title h1{font-size:15px}
+  .brand{position:fixed;left:0;right:0;bottom:0;z-index:30;height:calc(var(--strip-h) + env(safe-area-inset-bottom));padding:0 12px env(safe-area-inset-bottom);background:var(--surface-1);border-top:1px solid var(--line-1);justify-content:flex-start}
+  .brand .social{width:44px;height:36px}
+  .brand .social svg{width:18px;height:18px}
+  .utilities .hsep{margin:0 2px}
+  .icon-btn{width:40px;height:40px}
+  .drawer{width:100vw;height:86dvh;margin:auto 0 0;border-left:0;border-top:1px solid var(--line-1);border-radius:var(--r-3) var(--r-3) 0 0}
+  .drawer.sheet{transform:translateY(24px)}
+  @starting-style{.drawer.sheet[open]{transform:translateY(24px)}}
+}
+@media (max-width:360px){.icon-btn{width:38px}.utilities{gap:0}}
+
+/* ═══════ 이 실험실 ═══════ */
+/* 힘의 3요소 — 장면 토큰(두 테마 같은 목록) · 몰입형 장면 + 오른쪽 조작 레일 */
+:root[data-theme="dark"]{
+  --force:#ff7b5c;--force-ink:#5a1a0e;--force-soft:#ff7b5c33;
+  --wood-hi:#c99a63;--wood:#9c7348;--wood-lo:#5c4128;--grain:#b88a58;
+  --wall-fill:#223244;--wall-hatch:#3f566e;--wall-edge:#4d6680;
+  --arc:#36506a;--prot:#6f879e;--prot-text:#b0c0cf;--ghost:#9fb2c4;--peak:#ff7b5c;
+  --metal-hi:#e3e8ee;--metal-lo:#56606b;--floor-label:#8ea2b4;
+}
+:root[data-theme="light"]{
+  --force:#cf3a1c;--force-ink:#ffffff;--force-soft:#cf3a1c26;
+  --wood-hi:#d9b07c;--wood:#b3834f;--wood-lo:#7a5431;--grain:#c69763;
+  --wall-fill:#dfe6ec;--wall-hatch:#98a8b7;--wall-edge:#8a9aab;
+  --arc:#b7c6d3;--prot:#7d90a2;--prot-text:#44596b;--ghost:#6d8193;--peak:#cf3a1c;
+  --metal-hi:#f4f7fa;--metal-lo:#5f6a76;--floor-label:#566b7e;
+}
+
+/* 배치: 장면이 주인공, 레일 340px */
+.lab{height:100%;display:grid;grid-template-columns:minmax(0,1fr) 340px}
+.stage-wrap{position:relative;min-width:0;min-height:0;background:var(--stage);border-right:1px solid var(--line-1);overflow:hidden}
+.stage{position:absolute;inset:0}
+#scene{position:absolute;inset:0;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none}
+.stage-tools{position:absolute;top:12px;right:12px;z-index:3}
+.stage-note{position:absolute;left:14px;top:14px;z-index:2;display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:var(--r-2);background:color-mix(in oklab,var(--stage) 86%,transparent);border:1px solid var(--line-1);font:500 13px/1.3 var(--font-ui);color:var(--text-2);pointer-events:none}
+.stage-note .k{color:var(--text-1);font-weight:700}
+.stage-note .dot{color:var(--line-2)}
+
+/* 장면 SVG */
+.wall-fill{fill:var(--wall-fill)}.wall-hatch{stroke:var(--wall-hatch);stroke-width:.7}
+.wall{fill:url(#hatch);stroke:var(--wall-edge);stroke-width:.6}
+.jamb{fill:var(--wall-edge)}
+.wood-hi-stop{stop-color:var(--wood-hi)}.wood-stop{stop-color:var(--wood)}.wood-lo-stop{stop-color:var(--wood-lo)}
+.metal-hi-stop{stop-color:var(--metal-hi)}.metal-lo-stop{stop-color:var(--metal-lo)}
+.leaf{fill:url(#woodGrad);stroke:var(--wood-lo);stroke-width:.45}
+.grain{stroke:var(--grain);stroke-width:.35;fill:none;opacity:.8}
+.lever{fill:var(--metal-lo);stroke:none}
+.lever-hi{fill:var(--metal-hi);opacity:.7}
+.pivot{fill:url(#pivotGrad);stroke:var(--metal-lo);stroke-width:.5}
+.pivot-dot{fill:var(--metal-lo)}
+.swing{fill:none;stroke:var(--arc);stroke-width:.7;stroke-dasharray:2.4 2.2}
+.ptick{stroke:var(--prot);stroke-width:.55}
+.ptick.major{stroke-width:.9}
+.ptext{fill:var(--prot-text);font-size:var(--t12);font-weight:500;text-anchor:middle;dominant-baseline:central;font-variant-numeric:tabular-nums}
+.ptext.start{text-anchor:start}
+.room.end{text-anchor:end}
+.room{fill:var(--floor-label);font-size:var(--t13);font-weight:700;letter-spacing:.02em}
+.cap-s.end{text-anchor:end}
+.cap-s{fill:var(--floor-label);font-size:var(--t12);font-weight:500}
+.ghost-leaf{fill:none;stroke:var(--ghost);stroke-width:.7;stroke-dasharray:2 1.6;opacity:.85}
+.ghost-t{text-anchor:middle;fill:var(--ghost);font-size:var(--t12);font-weight:600;dominant-baseline:central}
+.peak-mark{stroke:var(--peak);stroke-width:1.6;stroke-linecap:round}
+.peak-t{text-anchor:middle;fill:var(--force);font-size:var(--t15);font-weight:800;dominant-baseline:central;paint-order:stroke;stroke:var(--stage);stroke-width:var(--h3,3px);stroke-linejoin:round;font-variant-numeric:tabular-nums}
+.ang-t{text-anchor:start;fill:var(--text-1);font-size:var(--t13);font-weight:700;dominant-baseline:central;paint-order:stroke;stroke:var(--stage);stroke-width:var(--h3,3px);stroke-linejoin:round;font-variant-numeric:tabular-nums}
+/* 힘 화살표: ● 시작점(작용점) · 눈금 새긴 몸통(크기) · ▶ 머리(방향) */
+.f-body{stroke:var(--force);stroke-width:3.1;stroke-linecap:butt;fill:none}
+.f-tick{stroke:var(--force-ink);stroke-width:1.1}
+.f-head{fill:var(--force)}
+.f-dot{fill:var(--force);stroke:var(--stage);stroke-width:1.4}
+.f-label{fill:var(--force);font-size:var(--t13);font-weight:800;paint-order:stroke;stroke:var(--stage);stroke-width:var(--h3,3px);stroke-linejoin:round;dominant-baseline:central;font-variant-numeric:tabular-nums}
+.f-ring{fill:none;stroke:var(--force);stroke-width:.8;opacity:.55;stroke-dasharray:1.6 1.6}
+.hit{fill:transparent;stroke:none;cursor:grab;outline:none}
+.hit:active{cursor:grabbing}
+.hit:focus-visible+.focus-ring,.handle:focus-visible .focus-ring{opacity:1}
+.focus-ring{fill:none;stroke:var(--focus);stroke-width:1;opacity:0;pointer-events:none}
+.handle{outline:none;cursor:grab}
+.handle.dragging{cursor:grabbing}
+.pushing .f-body{stroke-width:3.6}
+.arrow-dim{opacity:.38}
+#gArrow{transition:opacity var(--dur-ui) var(--ease-out)}
+.door-hit{fill:transparent;cursor:pointer}
+
+/* 레일 */
+.rail{display:flex;flex-direction:column;min-height:0;background:var(--surface-1)}
+.rail-head{padding:12px 16px;border-bottom:1px solid var(--line-1)}
+.rail-head .seg{width:100%}
+.rail-scroll{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:14px 16px 16px;display:flex;flex-direction:column;gap:20px}
+.rail-foot{display:flex;gap:8px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line-1);background:var(--surface-1)}
+.rail-foot .grow{flex:1;min-height:44px;font-size:15px}
+.rail-foot .ghost{min-height:44px}
+.cap{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font:700 13px/1.4 var(--font-ui);color:var(--text-1);margin-bottom:6px}
+.cap-note{font:500 12px/1.4 var(--font-ui);color:var(--text-2)}
+.els{display:flex;flex-direction:column}
+.el{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px;min-height:52px;padding:4px 0;border-top:1px solid var(--line-1)}
+.el:last-child{border-bottom:1px solid var(--line-1)}
+.el .glyph{width:28px;height:16px}
+.g-body{stroke:var(--force);stroke-width:3;fill:none}
+.g-body.faint{opacity:.35}
+.g-tick{stroke:var(--force-ink);stroke-width:1.4}
+:root[data-theme="dark"] .g-tick{stroke:var(--surface-1)}
+.g-dot,.g-head{fill:var(--force)}
+.el-txt{display:flex;flex-direction:column;min-width:0}
+.el-name{font:600 12px/1.3 var(--font-ui);color:var(--text-2)}
+.el-val{font:700 15px/1.35 var(--font-ui);color:var(--text-1)}
+.el.flash .el-val{animation:elflash .6s var(--ease-out)}
+@keyframes elflash{0%{color:var(--force)}100%{color:var(--text-1)}}
+.el.changed .glyph{filter:drop-shadow(0 0 0 transparent)}
+.step{display:flex;gap:2px}
+.icon-btn.sm{width:34px;height:34px;border:1px solid var(--line-1);background:var(--surface-1)}
+.icon-btn.sm svg.ic{width:17px;height:17px}
+.result{display:flex;flex-direction:column;gap:6px}
+.res-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.result .readout .v{font-size:30px}
+.result .readout .u{font-size:13px}
+.prev{font:500 13px/1.4 var(--font-ui);color:var(--text-2);min-height:18px}
+.change{font:400 15px/1.6 var(--font-ui);color:var(--text-1);min-height:48px}
+.change b{font-weight:700}
+.ghost-tog{min-height:28px;font-size:12px}
+/* 문 퍼즐 목표 */
+.goal:empty{display:none}
+.goal{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:var(--r-2);background:var(--surface-2);border:1px solid var(--line-1)}
+.goal .gt{display:flex;align-items:center;justify-content:space-between;gap:8px;font:600 12px/1 var(--font-ui);color:var(--text-2)}
+.goal .dots{display:flex;gap:5px}
+.goal .dots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--text-2)}
+.goal .dots i.on{background:var(--ok);border-color:var(--ok)}
+.goal .dots i.cur{border-color:var(--text-1);box-shadow:0 0 0 2px color-mix(in oklab,var(--text-1) 25%,transparent)}
+.goal .g-text{font:700 15px/1.5 var(--font-ui);color:var(--text-1)}
+.goal .g-fb{font:500 13px/1.55 var(--font-ui);color:var(--text-1)}
+.goal .g-fb.ok{color:var(--ok)}
+.goal .g-fb.ok::before{content:'✓ ';font-weight:800}
+.goal .g-row{display:flex;gap:6px;flex-wrap:wrap}
+.goal .done-t{font:800 18px/1.4 var(--font-ui)}
+
+/* ≤ 860px: 레일이 장면 아래로, 푸터는 sticky */
+@media (max-width:860px){
+  main.app{overflow:auto}
+  .lab{height:auto;min-height:100%;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto}
+  .stage-wrap{aspect-ratio:256/272;max-height:62dvh;border-right:0;border-bottom:1px solid var(--line-1)}
+  .rail-scroll{overflow:visible;gap:14px;padding:12px 16px}
+  .rail-foot{position:sticky;bottom:0;z-index:5}
+}
+@media (max-width:600px){
+  .stage-tools{top:8px;right:8px}
+  .save-btn{width:44px;height:44px;padding:0;justify-content:center}
+  .save-btn .save-l{display:none}
+  .stage-note{font-size:12px;padding:4px 8px}
+  .rail-head{padding:10px 12px}
+  .rail-scroll{padding:10px 12px}
+  .el{min-height:48px;gap:8px}
+  .rail-foot{padding:10px 12px}
+  .change{min-height:0}
+  .result{order:-1}
+  .goal{order:-2}
+  .stage-note{left:8px;top:8px}
+}
+
+</style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen py-12 px-4">
+<body data-lab="three-force">
+<a class="skip" href="#main">실험 화면으로 건너뛰기</a>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="ig-grad" x1="0" y1="1" x2="1" y2="0"><stop offset="0" style="stop-color:var(--ig-1)"/><stop offset=".35" style="stop-color:var(--ig-2)"/><stop offset=".65" style="stop-color:var(--ig-3)"/><stop offset="1" style="stop-color:var(--ig-4)"/></linearGradient></defs></svg>
+<header class="topbar">
+  <div class="brand">
+    <span class="brandmark" id="brandIc" aria-hidden="true"></span>
+    <span class="word">송쌤과학</span>
+    <span class="vdiv" aria-hidden="true"></span>
+    <a class="social" id="yt" href="https://www.youtube.com/@songsamscience" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 유튜브 채널 (새 창)" title="YouTube @songsamscience (새 창)"></a>
+    <a class="social" id="ig" href="https://www.instagram.com/songsamscience/" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 인스타그램 (새 창)" title="Instagram @songsamscience (새 창)"></a>
+  </div>
+  <span class="vdiv" aria-hidden="true"></span>
+  <div class="top-title"><h1>힘의 3요소</h1><span class="std">중1 · 힘의 작용</span></div>
+  <div class="utilities">
+    <button class="icon-btn" id="bookBtn" aria-label="원리 카드 열기" title="원리 카드"></button>
+    <button class="icon-btn" id="helpBtn" aria-label="도움말 (H)" title="도움말 (H)"></button>
+    <span class="hsep" aria-hidden="true"></span>
+    <button class="icon-btn" id="fullBtn" aria-label="전체화면 (F)" title="전체화면 (F)"></button>
+    <button class="icon-btn" id="themeBtn" aria-label="라이트 모드로 전환 (D)" title="라이트 모드로 전환 (D)"></button>
+  </div>
+</header>
+<main class="app" id="main" tabindex="-1">
+<div class="lab" id="lab">
+  <section class="stage-wrap" aria-labelledby="stageCap">
+    <h2 class="sr-only" id="stageCap">실험 장면 — 위에서 내려다본 스윙 도어와 힘 화살표</h2>
+    <div class="stage" id="stage">
+      <svg id="scene" viewBox="0 10 256 272" role="group" aria-label="위에서 내려다본 스윙 도어. 힘 화살표의 시작점과 끝을 끌어 조절해요.">
+        <defs>
+          <pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <rect width="4" height="4" class="wall-fill"/><path d="M0 0V4" class="wall-hatch"/>
+          </pattern>
+          <linearGradient id="woodGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" class="wood-hi-stop"/><stop offset=".55" class="wood-stop"/><stop offset="1" class="wood-lo-stop"/>
+          </linearGradient>
+          <radialGradient id="pivotGrad" cx=".38" cy=".34" r=".7">
+            <stop offset="0" class="metal-hi-stop"/><stop offset="1" class="metal-lo-stop"/>
+          </radialGradient>
+        </defs>
+        <g id="gBack"></g>
+        <g id="gProt"></g>
+        <g id="gWall"></g>
+        <g id="gGhost"></g>
+        <g id="gDoor"></g>
+        <g id="gArrow"></g>
+        <g id="gTags"></g>
+      </svg>
+    </div>
+    <p class="stage-note" id="stageNote"><span class="k">▶ 끌기</span> 크기·방향 <span class="dot">·</span> <span class="k">● 끌기</span> 작용점</p>
+    <div class="stage-tools"><button class="save-btn" id="saveBtn" aria-label="실험 결과를 PNG 이미지로 저장 (C)" title="실험 결과를 PNG 이미지로 저장 (C)"></button></div>
+  </section>
 
-    <main class="max-w-6xl w-full bg-white rounded-2xl shadow-xl overflow-hidden">
-        <header class="p-8 md:p-12 bg-gray-50 border-b border-gray-200">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center">힘의 3요소</h1>
-            <p class="text-lg text-gray-600 text-center mt-3 max-w-2xl mx-auto">
-                힘은 물체의 운동 상태나 모양을 변화시키는 원인입니다. 힘을 정확히 기술하기 위해서는 3가지 요소가 필요합니다.
-            </p>
-        </header>
+  <aside class="rail" aria-label="힘의 3요소 조절과 결과">
+    <div class="rail-head">
+      <div class="seg" id="modeSeg" role="group" aria-label="활동 고르기">
+        <button data-v="free" aria-pressed="true">자유 실험</button>
+        <button data-v="quiz" aria-pressed="false">문 퍼즐 <span class="num" id="puzCount">0/3</span></button>
+      </div>
+    </div>
+    <div class="rail-scroll" id="railScroll">
+      <div class="goal" id="goal" aria-live="polite"></div>
 
-        <!-- 인포그래픽 카드 섹션 --><div class="grid grid-cols-1 md:grid-cols-3 gap-0">
-
-            <!-- 1. 힘의 크기 (Magnitude) --><div class="p-6 md:p-8 border-b md:border-b-0 md:border-r border-gray-200">
-                <h2 class="text-2xl font-semibold text-blue-700 mb-4">1. 힘의 크기 (Magnitude)</h2>
-                <p class="text-gray-700 mb-6 leading-relaxed">
-                    힘의 세기를 나타냅니다. (단위: N, 뉴턴)
-                    <br>
-                    인포그래픽에서는 보통 <strong class="font-medium text-gray-900">화살표의 길이</strong>로 크기를 표현합니다.
-                </p>
-                <!-- 인터랙티브 그래픽: 크기 --><div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center p-4">
-                    <div id="magnitude-arrow" class="arrow" style="width: 120px;"></div>
-                </div>
-                <!-- 컨트롤러: 크기 --><div class="mt-6">
-                    <label for="magnitude-slider" class="block text-sm font-medium text-gray-700 mb-2">크기 조절 (50N ~ 200N)</label>
-                    <input id="magnitude-slider" type="range" min="50" max="200" value="120" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
-                </div>
-            </div>
-
-            <!-- 2. 힘의 방향 (Direction) --><div class="p-6 md:p-8 border-b md:border-b-0 md:border-r border-gray-200">
-                <h2 class="text-2xl font-semibold text-green-700 mb-4">2. 힘의 방향 (Direction)</h2>
-                <p class="text-gray-700 mb-6 leading-relaxed">
-                    힘이 작용하는 쪽을 나타냅니다.
-                    <br>
-                    인포그래픽에서는 <strong class="font-medium text-gray-900">화살표의 머리</strong>가 가리키는 쪽으로 방향을 표현합니다.
-                </p>
-                <!-- 인터랙티브 그래픽: 방향 --><div class="h-40 bg-gray-100 rounded-lg flex items-center justify-center p-4">
-                    <!-- SVG를 사용하여 회전 제어 --><svg id="direction-arrow-svg" width="150" height="150" viewBox="0 0 150 150" class="transition-transform duration-300 ease-in-out">
-                        <line x1="25" y1="75" x2="115" y2="75" stroke="#15803d" stroke-width="8" stroke-linecap="round" />
-                        <path d="M110 60 L 130 75 L 110 90" fill="none" stroke="#15803d" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </div>
-                <!-- 컨트롤러: 방향 --><div class="mt-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">방향 조절</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button data-angle="0" class="direction-btn bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">오른쪽 (0°)</button>
-                        <button data-angle="-90" class="direction-btn bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">위쪽 (-90°)</button>
-                        <button data-angle="180" class="direction-btn bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">왼쪽 (180°)</button>
-                        <button data-angle="90" class="direction-btn bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition-colors">아래쪽 (90°)</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. 힘의 작용점 (Point of Application) --><div class="p-6 md:p-8">
-                <h2 class="text-2xl font-semibold text-red-700 mb-4">3. 힘의 작용점</h2>
-                <p class="text-gray-700 mb-6 leading-relaxed">
-                    힘이 물체에 실제로 작용하는 지점입니다.
-                    <br>
-                    <strong class="font-medium text-gray-900">화살표가 시작되는 지점</strong>으로 작용점을 표현합니다. (상자를 클릭, 화살표를 드래그)
-                </p>
-                <!-- 인터랙티브 그래픽: 작용점 --><div id="application-box" class="h-40 bg-gray-100 rounded-lg border-2 border-gray-300">
-                    <!-- 자바스크립트로 포인터와 화살표 추가 --><div id="application-point" style="left: 50%; top: 50%;"></div>
-                    <div id="application-arrow" class="arrow" style="left: 50%; top: 50%; background-color: #ef4444; transform: rotate(0deg);">
-                    </div>
-                </div>
-                <!-- 컨트롤러: 작용점 (클릭 안내) --><div class="mt-6">
-                    <p class="text-sm font-medium text-gray-700 text-center">
-                        상자 안을 클릭: 작용점 변경<br>
-                        화살표를 드래그: 방향 변경
-                    </p>
-                </div>
-            </div>
-
+      <div class="els" role="group" aria-labelledby="elsCap">
+        <h3 class="cap" id="elsCap">힘의 3요소 <span class="cap-note">화살표 한 칸 = 10 N</span></h3>
+        <div class="el" id="elPoint">
+          <svg class="glyph" viewBox="0 0 28 16" aria-hidden="true"><line x1="9" y1="8" x2="27" y2="8" class="g-body faint"/><circle cx="7" cy="8" r="4.2" class="g-dot"/></svg>
+          <div class="el-txt"><span class="el-name">작용점</span><span class="el-val" id="vPoint">경첩에서 80 cm</span></div>
+          <div class="step">
+            <button class="icon-btn sm" data-act="point-" aria-label="작용점을 경첩 쪽으로 5 cm" title="경첩 쪽으로"></button>
+            <button class="icon-btn sm" data-act="point+" aria-label="작용점을 문 끝 쪽으로 5 cm" title="문 끝 쪽으로"></button>
+          </div>
         </div>
-    </main>
+        <div class="el" id="elMag">
+          <svg class="glyph" viewBox="0 0 28 16" aria-hidden="true"><line x1="2" y1="8" x2="26" y2="8" class="g-body"/><path d="M9 4.5v7M17 4.5v7" class="g-tick"/></svg>
+          <div class="el-txt"><span class="el-name">크기</span><span class="el-val num" id="vMag">20 N</span></div>
+          <div class="step">
+            <button class="icon-btn sm" data-act="mag-" aria-label="힘의 크기를 5 N 줄이기" title="5 N 줄이기"></button>
+            <button class="icon-btn sm" data-act="mag+" aria-label="힘의 크기를 5 N 늘리기" title="5 N 늘리기"></button>
+          </div>
+        </div>
+        <div class="el" id="elDir">
+          <svg class="glyph" viewBox="0 0 28 16" aria-hidden="true"><line x1="2" y1="8" x2="18" y2="8" class="g-body faint"/><path d="M27 8 16 2.5v11Z" class="g-head"/></svg>
+          <div class="el-txt"><span class="el-name">방향</span><span class="el-val" id="vDir">문에 수직 · 방 안쪽으로</span></div>
+          <div class="step">
+            <button class="icon-btn sm" data-act="dir+" aria-label="힘의 방향을 시계 반대 방향으로 15° 돌리기" title="15° 돌리기 ↺"></button>
+            <button class="icon-btn sm" data-act="dir-" aria-label="힘의 방향을 시계 방향으로 15° 돌리기" title="15° 돌리기 ↻"></button>
+          </div>
+        </div>
+      </div>
 
-    <footer class="mt-8 text-gray-500 text-sm font-medium">
-        ⓒ 2025. 송쌤과학 All rights reserved.
-    </footer>
+      <div class="result" id="result">
+        <div class="res-top">
+          <span class="lbl">문이 열린 최대 각도</span>
+          <button class="chip ghost-tog" id="ghostTog" aria-pressed="true" title="직전 결과를 점선 문으로 겹쳐 보기">직전 결과</button>
+        </div>
+        <div class="readout"><span class="v" id="vPeak">–</span><span class="u" id="vPeakSide">아직 밀지 않았어요</span></div>
+        <p class="prev num" id="vPrev"></p>
+        <p class="change note-slot" id="vChange">화살표를 그린 뒤 <b>문 밀기</b>를 눌러요.</p>
+      </div>
+    </div>
+    <div class="rail-foot">
+      <button class="btn primary grow" id="pushBtn"></button>
+      <button class="btn ghost" id="resetBtn" title="화살표와 문을 처음 상태로"></button>
+    </div>
+  </aside>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
+</main>
+<div class="strip-space" aria-hidden="true"></div>
+<dialog id="modal" class="modal sheet" aria-labelledby="modalTitle">
+  <header class="dialog-head"><h2 id="modalTitle"></h2><button class="icon-btn" data-close aria-label="닫기 (Esc)" title="닫기 (Esc)"></button></header>
+  <div class="dialog-body" id="modalBody"></div>
+</dialog>
+<dialog id="drawer" class="drawer sheet" aria-labelledby="drawerTitle">
+  <header class="dialog-head"><h2 id="drawerTitle">원리 카드</h2><button class="btn small ghost" id="dHelp">도움말</button><button class="icon-btn" data-close aria-label="닫기 (Esc)" title="닫기 (Esc)"></button></header>
+  <div class="dialog-body" id="drawerBody"></div>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="sr-only" id="live" aria-live="polite"></div>
+<script>
+/* ═══════ 송쌤과학 중1 가상실험실 공통 껍데기 — 테마 · 전체화면 · 도움말 · 원리 카드 · 결과 저장 · 단축키 ═══════
+   각 실험실은 SS.init({...})을 한 번 부른다. 채널 주소는 이 파일의 CHANNELS 한 곳에서만 정의한다. */
+const SS = (() => {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const NS = 'http://www.w3.org/2000/svg';
+  const CHANNELS = { yt: 'https://www.youtube.com/@songsamscience', ig: 'https://www.instagram.com/songsamscience/' };
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ICONS = {
+    flask: '<path d="M9 3h6m-5 0v6L4.5 19A2 2 0 0 0 6.3 22h11.4a2 2 0 0 0 1.8-3L14 9V3M7.5 15h9"/>',
+    book: '<path d="M12 6.6C10.4 5.1 7.9 4.5 3.5 4.5v14c4.4 0 6.9.6 8.5 2.1 1.6-1.5 4.1-2.1 8.5-2.1v-14c-4.4 0-6.9.6-8.5 2.1Z"/><path d="M12 6.6v14"/>',
+    help: '<circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.6 2.3c-.7.4-1.2 1-1.2 1.8v.5"/><path d="M12 17.2h.01"/>',
+    fsIn: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+    fsOut: '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',
+    moon: '<path d="M20 14.6A8.2 8.2 0 1 1 9.4 4a6.6 6.6 0 0 0 10.6 10.6Z"/>',
+    sun: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/>',
+    camera: '<path d="M3.5 8.5h3.2l1.8-3h7l1.8 3h3.2v11h-17Z"/><circle cx="12" cy="13.5" r="3.6"/>',
+    x: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
+    check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    chev: '<path d="m9.5 6 6 6-6 6"/>',
+    chevL: '<path d="m14.5 6-6 6 6 6"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    minus: '<path d="M5 12h14"/>',
+    trash: '<path d="M5 7h14M10 7V4.5h4V7M7 7l1 13h8l1-13"/>',
+    reset: '<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4.5 9"/><path d="M4.5 4.5V9H9"/>',
+    undo: '<path d="M9 8H5V4"/><path d="M5.3 8A8 8 0 1 1 5 15"/>',
+    play: '<path d="M7.5 5.5v13l11-6.5Z"/>',
+    pause: '<path d="M8 5.5v13M16 5.5v13"/>',
+    pen: '<path d="M4.5 19.5h4l10-10-4-4-10 10Z"/><path d="m13 7 4 4"/>',
+    push: '<path d="M3.5 12h11"/><path d="m10.5 7 5 5-5 5"/><path d="M19.5 4.5v15"/>',
+    target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.6"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/>',
+    ghost: '<circle cx="14" cy="11" r="7"/><circle cx="9.5" cy="13.5" r="5.2" stroke-dasharray="2.4 2.2"/>',
+    record: '<path d="M5 4.5h10.5l3.5 3.5v11.5H5Z"/><path d="M8.5 11h7M8.5 14.5h7M8.5 7.5h4"/>',
+    compare: '<path d="M12 3.5v17"/><rect x="3.5" y="6.5" width="6" height="11" rx="1.5"/><rect x="14.5" y="6.5" width="6" height="11" rx="1.5"/>',
+    yt: '<path class="yt-body" d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4a2.6 2.6 0 0 0-1.8 1.8A27 27 0 0 0 2 12a27 27 0 0 0 .4 4.8 2.6 2.6 0 0 0 1.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.8Z"/><path class="yt-play" d="M10 15.3V8.7l5.6 3.3Z"/>',
+    ig: '<rect class="ig-line" x="3" y="3" width="18" height="18" rx="5.2"/><circle class="ig-line" cx="12" cy="12" r="4.1"/><circle class="ig-dot" cx="17.4" cy="6.6" r="1.2"/>',
+  };
+  const icon = (name, cls = '') => `<svg class="ic ${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${ICONS[name] || ''}</svg>`;
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-            // --- 1. 힘의 크기 ---
-            const magnitudeSlider = document.getElementById('magnitude-slider');
-            const magnitudeArrow = document.getElementById('magnitude-arrow');
+  let CFG = null;
+  const themeHooks = [];
 
-            magnitudeSlider.addEventListener('input', (e) => {
-                magnitudeArrow.style.width = `${e.target.value}px`;
-            });
+  /* ── 저장: 진행 상태는 sessionStorage, 테마·익명 최고 기록만 localStorage ── */
+  const KEY = n => `ssv-${CFG.id}-${n}`;
+  const store = {
+    get(n, d) { try { const v = sessionStorage.getItem(KEY(n)); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(n, v) { try { sessionStorage.setItem(KEY(n), JSON.stringify(v)); } catch (e) { } },
+    del(n) { try { sessionStorage.removeItem(KEY(n)); } catch (e) { } },
+    clear() { try { Object.keys(sessionStorage).filter(k => k.startsWith(`ssv-${CFG.id}-`)).forEach(k => sessionStorage.removeItem(k)); } catch (e) { } },
+  };
 
-            // --- 2. 힘의 방향 ---
-            const directionBtns = document.querySelectorAll('.direction-btn');
-            const directionArrowSvg = document.getElementById('direction-arrow-svg');
+  /* ── 알림 ── */
+  function announce(m) { const l = $('#live'); if (!l) return; l.textContent = ''; requestAnimationFrame(() => { l.textContent = m; }); }
+  let toastT = 0, toastLast = '', toastN = 1;
+  function toast(msg, o = {}) {
+    const e = $('#toast');
+    if (msg === toastLast && !e.hidden) toastN++; else toastN = 1;
+    toastLast = msg;
+    e.innerHTML = `<span>${esc(msg)}${toastN > 1 ? ` <b class="num">×${toastN}</b>` : ''}</span>${o.error ? `<button class="toast-x" aria-label="알림 닫기">${icon('x')}</button>` : ''}`;
+    e.classList.toggle('error', !!o.error);
+    e.hidden = false;
+    const x = e.querySelector('.toast-x'); if (x) x.onclick = () => { e.hidden = true; };
+    clearTimeout(toastT);
+    toastT = setTimeout(() => { e.hidden = true; }, o.error ? 7000 : 2800);
+  }
 
-            directionBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const angle = btn.getAttribute('data-angle');
-                    directionArrowSvg.style.transform = `rotate(${angle}deg)`;
-                });
-            });
+  /* ── 테마 (§11 — 스위치는 html[data-theme] 하나) ── */
+  function applyTheme(t) {
+    document.documentElement.dataset.theme = t;
+    try { localStorage.setItem('ssv-theme', t); } catch (e) { }
+    const next = t === 'dark' ? '라이트' : '다크', b = $('#themeBtn');
+    b.setAttribute('aria-label', `${next} 모드로 전환 (D)`); b.setAttribute('title', `${next} 모드로 전환 (D)`);
+    b.innerHTML = icon(t === 'dark' ? 'moon' : 'sun');
+    const mt = $('#metaTheme'); if (mt) mt.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--surface-1').trim());
+    themeHooks.forEach(f => f(t));
+  }
+  const toggleTheme = () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
 
-            // --- 3. 힘의 작용점 ---
-            const applicationBox = document.getElementById('application-box');
-            const applicationPoint = document.getElementById('application-point');
-            const applicationArrow = document.getElementById('application-arrow');
+  /* ── 전체화면 ── */
+  function toggleFull() {
+    const d = document;
+    if (d.fullscreenElement) { d.exitFullscreen && d.exitFullscreen(); return; }
+    const r = d.documentElement;
+    if (!r.requestFullscreen || d.fullscreenEnabled === false) { toast('이 브라우저에서는 전체화면을 지원하지 않습니다', { error: true }); return; }
+    r.requestFullscreen().catch(() => toast('전체화면으로 바꾸지 못했어요. 다시 눌러 보세요.', { error: true }));
+  }
+  function syncFull() {
+    const on = !!document.fullscreenElement, b = $('#fullBtn');
+    document.body.classList.toggle('fs', on);
+    b.innerHTML = icon(on ? 'fsOut' : 'fsIn');
+    const l = on ? '전체화면 나가기 (F · Esc)' : '전체화면 (F)';
+    b.setAttribute('aria-label', l); b.setAttribute('title', l);
+  }
 
-            let isDraggingArrow = false;
-            let currentAngle = 0; // 현재 화살표 각도 저장
-
-            // 상자 클릭: 작용점 위치 변경
-            applicationBox.addEventListener('click', (e) => {
-                isDraggingArrow = false; // 드래그 중이 아님
-
-                // 이벤트 타겟이 화살표(자신 또는 자식 요소)이면 위치 변경 방지
-                if (e.target === applicationArrow || applicationArrow.contains(e.target)) {
-                    return;
-                }
-
-                const rect = applicationBox.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-
-                // 포인터와 화살표 위치 업데이트
-                applicationPoint.style.left = `${x}px`;
-                applicationPoint.style.top = `${y}px`;
-                applicationArrow.style.left = `${x}px`;
-                applicationArrow.style.top = `${y}px`;
-
-                // [FIX]
-                // 위치 변경 시, 이전에 설정된 각도(currentAngle)가
-                // 초기화되지 않고 유지되도록 관련 코드를 제거했습니다.
-                // const boxWidth = applicationBox.offsetWidth;
-                // if (x > boxWidth * 0.6) {
-                //     currentAngle = 180;
-                // } else {
-                //     currentAngle = 0;
-                // }
-                // applicationArrow.style.transform = `rotate(${currentAngle}deg)`;
-            });
-
-            // --- 화살표 드래그 로직 ---
-
-            // 1. 화살표에서 마우스 누르기: 드래그 시작
-            applicationArrow.addEventListener('mousedown', (e) => {
-                e.preventDefault(); // 기본 드래그 동작 방지
-                e.stopPropagation(); // 상자 클릭 이벤트 전파 중단
-                isDraggingArrow = true;
-                applicationArrow.style.cursor = 'grabbing'; // 잡는 중 커서
-            });
-
-            // 2. 문서 전체에서 마우스 이동: 각도 계산
-            document.addEventListener('mousemove', (e) => {
-                if (!isDraggingArrow) return; // 드래그 중이 아니면 반환
-
-                // 파란색 점(회전축)의 화면상 좌표 가져오기
-                const pointRect = applicationPoint.getBoundingClientRect();
-                const pivotX = pointRect.left + (pointRect.width / 2);
-                const pivotY = pointRect.top + (pointRect.height / 2);
-
-                // 마우스 위치와 회전축 사이의 각도 계산
-                const deltaX = e.clientX - pivotX;
-                const deltaY = e.clientY - pivotY;
-                const angleRad = Math.atan2(deltaY, deltaX); // 라디안
-                currentAngle = angleRad * (180 / Math.PI); // 디그리
-
-                // 화살표에 회전 적용
-                applicationArrow.style.transform = `rotate(${currentAngle}deg)`;
-            });
-
-            // 3. 문서 전체에서 마우스 떼기: 드래그 종료
-            document.addEventListener('mouseup', () => {
-                if (isDraggingArrow) {
-                    isDraggingArrow = false;
-                    applicationArrow.style.cursor = 'grab'; // 원래 커서로 복귀
-                }
-            });
-
+  /* ── 대화상자 (네이티브 <dialog>) ── */
+  let lastTrigger = null;
+  function openModal(title, html, o = {}) {
+    const d = $('#modal');
+    if (d.open) d.close();
+    lastTrigger = document.activeElement;
+    d.classList.toggle('narrow', !!o.narrow);
+    $('#modalTitle').textContent = title;
+    $('#modalBody').innerHTML = html;
+    d.showModal();
+    if (o.onOpen) o.onOpen(d);
+    $('#modalBody').scrollTop = 0;
+  }
+  function openDrawer() {
+    const d = $('#drawer');
+    lastTrigger = document.activeElement;
+    $('#drawerBody').innerHTML = CFG.theory();
+    d.showModal();
+    $('#drawerBody').scrollTop = 0;
+    if (CFG.onTheoryOpen) CFG.onTheoryOpen($('#drawerBody'));
+  }
+  function openHelp() {
+    const h = CFG.help;
+    openModal('도움말', `<div class="help-doc">
+      <h3>이렇게 해 보세요</h3>${h.how}
+      <h3>단축키</h3><p class="keys"><kbd>F</kbd> 전체화면 · <kbd>D</kbd> 다크/라이트 · <kbd>H</kbd> 도움말 · <kbd>C</kbd> 결과 저장 · <kbd>Esc</kbd> 창 닫기·전체화면 나가기${h.keys ? '<br>' + h.keys : ''}</p>
+      <h3>결과 저장</h3><p>장면 오른쪽 위 <b>결과 저장</b>(또는 <kbd>C</kbd>)을 누르면 지금 보이는 장면과 그 순간의 조건·값이 담긴 PNG 한 장이 기기의 다운로드 폴더에 저장돼요(iPad는 저장 확인 창이 떠요).</p>
+      <h3>모형의 조건과 한계</h3>${h.model}
+      <h3>출처와 제작</h3>${h.source}
+      <h3>기록 지우기</h3><p>실험 기록과 진행 상태는 이 탭에만 남고, 탭을 닫으면 지워져요.${h.local ? ' ' + h.local : ''}</p>
+      <button class="btn" id="wipeBtn">${icon('trash')}이 실험실의 기록 모두 지우기</button>
+      <div class="brandblock">🧪 송쌤과학 (Song Ssaem Science)<br>ⓒ 2026 송세호 | 아주중학교<br>📺 YouTube: <a href="${CHANNELS.yt}" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 유튜브 채널 (새 창)">@songsamscience</a>&nbsp; 📷 Instagram: <a href="${CHANNELS.ig}" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 인스타그램 (새 창)">@songsamscience</a><br>⚠ 무단 복제·상업적 이용 금지</div>
+      <p class="ver-line">v${CFG.version} · ${CFG.date}</p></div>`, {
+      onOpen: () => {
+        $('#wipeBtn').onclick = () => openModal('기록을 모두 지울까요?', `<p>${h.wipe || '이 실험실의 기록과 진행 상태'}가 모두 지워져요. 테마 설정은 남아요.</p>
+          <div class="dialog-actions"><button class="btn" data-close>그대로 두기</button><button class="btn primary" id="wipeYes">모두 지우기</button></div>`, {
+          narrow: true, onOpen: () => {
+            $('#wipeYes').onclick = () => {
+              store.clear();
+              if (CFG.onWipe) CFG.onWipe();
+              $('#modal').close(); toast('기록을 모두 지웠어요.');
+            };
+          },
         });
-    </script>
+      },
+    });
+  }
 
+  /* ── 결과 저장 (§11): SVG 장면 복제 → 계산된 스타일 인라인 → 이미지 → 캔버스 + 정보 띠 → PNG ── */
+  const INLINE_PROPS = ['fill', 'fill-opacity', 'fill-rule', 'stroke', 'stroke-width', 'stroke-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'opacity', 'font-family', 'font-size', 'font-weight', 'font-style', 'text-anchor', 'dominant-baseline', 'paint-order', 'stop-color', 'stop-opacity', 'display', 'visibility', 'letter-spacing', 'font-variant-numeric', 'mix-blend-mode', 'filter', 'clip-path', 'mask', 'transform', 'transform-origin', 'transform-box'];
+  function inlineTree(src, dst) {
+    if (src.nodeType !== 1) return;
+    const cs = getComputedStyle(src);
+    let st = '';
+    for (const p of INLINE_PROPS) {
+      const v = cs.getPropertyValue(p);
+      if (p === 'transform' && (v === 'none' || !src.style.transform)) continue;   // CSS transform만 옮긴다(속성 transform은 그대로 있음)
+      if ((p === 'transform-origin' || p === 'transform-box') && !src.style.transform) continue;
+      if (v !== '' && v !== 'normal' && v !== 'none' || p === 'fill' || p === 'stroke' || (p === 'display' && v === 'none')) st += `${p}:${v};`;   // 숨긴 요소는 PNG에서도 숨긴다
+    }
+    dst.setAttribute('style', st); dst.removeAttribute('class');
+    const a = src.children, b = dst.children;
+    for (let i = 0; i < a.length && i < b.length; i++) inlineTree(a[i], b[i]);
+  }
+  function svgToImage(svg, outW, vbOverride) {
+    const clone = svg.cloneNode(true);
+    inlineTree(svg, clone);
+    clone.querySelectorAll('[data-noexport]').forEach(e => e.remove());
+    clone.querySelectorAll('[tabindex]').forEach(e => e.removeAttribute('tabindex'));
+    const vb = vbOverride || svg.viewBox.baseVal;
+    const outH = Math.round(outW * vb.height / vb.width);
+    clone.setAttribute('viewBox', `${vb.x} ${vb.y} ${vb.width} ${vb.height}`);
+    clone.setAttribute('width', outW); clone.setAttribute('height', outH); clone.setAttribute('xmlns', NS);
+    clone.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    const data = new XMLSerializer().serializeToString(clone);
+    const url = URL.createObjectURL(new Blob([data], { type: 'image/svg+xml;charset=utf-8' }));
+    return new Promise((ok, no) => { const img = new Image(); img.onload = () => { URL.revokeObjectURL(url); ok({ img, w: outW, h: outH }); }; img.onerror = e => { URL.revokeObjectURL(url); no(e); }; img.src = url; });
+  }
+  function wrapText(ctx, text, maxW) {
+    const words = String(text).split(' '), lines = []; let line = '';
+    for (const w of words) { const t = line ? line + ' ' + w : w; if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; }
+    if (line) lines.push(line);
+    return lines;
+  }
+  const p2 = n => String(n).padStart(2, '0');
+  async function capture() {
+    const btn = $('#saveBtn');
+    if (!btn || btn.offsetParent === null || btn.getAttribute('aria-busy') === 'true') return;
+    const cap = CFG.capture && CFG.capture();
+    if (!cap || !cap.svg) return;
+    btn.setAttribute('aria-busy', 'true');
+    const slow = setTimeout(() => toast('결과 이미지를 만드는 중이에요…'), 700);
+    try {
+      const css = getComputedStyle(document.documentElement), tok = n => css.getPropertyValue(n).trim();
+      const svg = cap.svg, vb = cap.viewBox || svg.viewBox.baseVal;
+      const r = svg.getBoundingClientRect(), fit = Math.min(r.width / svg.viewBox.baseVal.width, r.height / svg.viewBox.baseVal.height);
+      const outW = Math.round(Math.min(2400, Math.max(1200, vb.width * fit * 2)));
+      const g = await svgToImage(svg, outW, cap.viewBox);
+      const cv = document.createElement('canvas'), ctx = cv.getContext('2d');
+      const k = outW / 1200, pad = 28 * k, font = n => `${n}px 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif`;
+      ctx.font = `500 ${font(17 * k)}`;
+      const rightW = 300 * k, textW = outW - pad * 3 - rightW;
+      const condL = wrapText(ctx, cap.cond, textW), stateL = wrapText(ctx, cap.state, textW);
+      const bandH = pad * 2 + 50 * k + (condL.length + stateL.length) * 26 * k;
+      cv.width = outW; cv.height = Math.round(g.h + bandH);
+      ctx.fillStyle = tok(cap.bg || '--stage'); ctx.fillRect(0, 0, outW, g.h);
+      ctx.drawImage(g.img, 0, 0, g.w, g.h);
+      ctx.fillStyle = tok('--surface-1'); ctx.fillRect(0, g.h, outW, cv.height - g.h);
+      ctx.fillStyle = tok('--line-2'); ctx.fillRect(0, g.h, outW, Math.max(1, k));
+      let y = g.h + pad + 14 * k;
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = tok('--text-2'); ctx.font = `600 ${font(14 * k)}`; ctx.fillText('실험 결과 · 송쌤과학 가상실험실', pad, y);
+      y += 30 * k; ctx.fillStyle = tok('--text-1'); ctx.font = `800 ${font(22 * k)}`; ctx.fillText(cap.title || CFG.title, pad, y);
+      ctx.font = `500 ${font(17 * k)}`; ctx.fillStyle = tok('--text-1');
+      for (const l of condL) { y += 26 * k; ctx.fillText(l, pad, y); }
+      ctx.fillStyle = tok('--text-2');
+      for (const l of stateL) { y += 26 * k; ctx.fillText(l, pad, y); }
+      const now = new Date();
+      ctx.textAlign = 'right'; let ry = g.h + pad + 30 * k; const rx = outW - pad;
+      ctx.fillStyle = tok('--text-2'); ctx.font = `500 ${font(15 * k)}`;
+      ctx.fillText(`${now.getFullYear()}-${p2(now.getMonth() + 1)}-${p2(now.getDate())} ${p2(now.getHours())}:${p2(now.getMinutes())}`, rx, ry); ry += 26 * k;
+      ctx.fillText('© 송쌤과학 · @songsamscience', rx, ry);
+      ctx.textAlign = 'left';
+      const blob = await new Promise(ok => cv.toBlob(ok, 'image/png'));
+      if (!blob) throw new Error('blob');
+      const fname = `${CFG.file}_실험결과_${now.getFullYear()}${p2(now.getMonth() + 1)}${p2(now.getDate())}-${p2(now.getHours())}${p2(now.getMinutes())}.png`.replace(/[\\/:*?"<>|\s]/g, '');
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fname; document.body.appendChild(a); a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+      window.__lastCapture = { name: fname, w: cv.width, h: cv.height, url: cv.toDataURL('image/png') };
+      if (!REDUCED && cap.flashEl) { const f = document.createElement('div'); f.className = 'shutter'; cap.flashEl.appendChild(f); setTimeout(() => f.remove(), 340); }
+      toast(`실험 결과를 PNG로 저장했어요 — ${fname}`);
+    } catch (e) {
+      console.error(e);
+      toast('이미지로 저장하지 못했어요. 기기의 화면 캡처를 이용해 주세요.', { error: true });
+    } finally { clearTimeout(slow); btn.removeAttribute('aria-busy'); }
+  }
+
+  /* ── 애니메이션 루프: rAF + 델타 타임, 탭이 숨으면 멈춤 ── */
+  function loop(step) {
+    let last = 0, id = 0, on = true;
+    const f = t => { if (!on) return; const dt = last ? Math.min(0.05, (t - last) / 1000) : 0; last = t; step(dt); id = requestAnimationFrame(f); };
+    const vis = () => { if (document.hidden) { cancelAnimationFrame(id); last = 0; } else if (on) { last = 0; id = requestAnimationFrame(f); } };
+    document.addEventListener('visibilitychange', vis);
+    id = requestAnimationFrame(f);
+    return { stop() { on = false; cancelAnimationFrame(id); document.removeEventListener('visibilitychange', vis); } };
+  }
+
+  /* ── SVG 작은 도구 ── */
+  function el(tag, attrs = {}, parent) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) if (attrs[k] != null) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  /* 화면 좌표 → SVG 좌표 */
+  function svgPoint(svg, x, y) { const p = svg.createSVGPoint(); p.x = x; p.y = y; return p.matrixTransform(svg.getScreenCTM().inverse()); }
+
+  /* ── 초기화 ── */
+  function init(cfg) {
+    CFG = cfg;
+    $('#brandIc').innerHTML = icon('flask');
+    $('#yt').innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS.yt}</svg>`;
+    $('#ig').innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS.ig}</svg>`;
+    $('#yt').href = CHANNELS.yt; $('#ig').href = CHANNELS.ig;
+    $('#bookBtn').innerHTML = icon('book');
+    $('#helpBtn').innerHTML = icon('help');
+    $$('[data-close]').forEach(b => { if (!b.innerHTML.trim()) b.innerHTML = icon('x'); });
+    const sb = $('#saveBtn'); if (sb) sb.innerHTML = `${icon('camera')}<span class="save-l">결과 저장</span>`;
+    applyTheme(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
+    syncFull();
+    document.addEventListener('fullscreenchange', () => { syncFull(); if (CFG.onResize) requestAnimationFrame(CFG.onResize); });
+    $('#themeBtn').addEventListener('click', toggleTheme);
+    $('#fullBtn').addEventListener('click', toggleFull);
+    $('#helpBtn').addEventListener('click', openHelp);
+    $('#bookBtn').addEventListener('click', openDrawer);
+    if (sb) sb.addEventListener('click', capture);
+    $('#dHelp').addEventListener('click', () => { $('#drawer').close(); openHelp(); });
+    document.addEventListener('click', e => {
+      const c = e.target.closest('[data-close]'); if (c) { const d = c.closest('dialog'); if (d) d.close(); }
+    });
+    ['modal', 'drawer'].forEach(id => {
+      const d = $('#' + id);
+      d.addEventListener('close', () => { if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus({ preventScroll: true }); });
+      d.addEventListener('click', e => { if (e.target === d) d.close(); });   // 스크림(바깥) 누르면 닫기
+    });
+    document.addEventListener('keydown', e => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target;
+      if (t.closest && t.closest('input:not([type="range"]),textarea,select,[contenteditable="true"]')) return;
+      const k = e.key.toLowerCase();
+      const inDialog = $('#modal').open || $('#drawer').open;
+      if (k === 'f') { e.preventDefault(); toggleFull(); }
+      else if (k === 'd') { e.preventDefault(); toggleTheme(); }
+      else if (k === 'h') { e.preventDefault(); if ($('#modal').open) $('#modal').close(); else openHelp(); }
+      else if (k === 'c' && !inDialog) { e.preventDefault(); capture(); }
+      else if (CFG.onKey && !inDialog) CFG.onKey(e);
+    });
+    let rz = 0;
+    addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => CFG.onResize && CFG.onResize()); });
+  }
+
+  return { $, $$, NS, CHANNELS, REDUCED, ICONS, icon, esc, store, announce, toast, applyTheme, toggleTheme, openModal, openHelp, openDrawer, capture, loop, el, svgPoint, init, onTheme: f => themeHooks.push(f) };
+})();
+
+/* ═══════ 이 실험실 ═══════ */
+/* ───────── 힘의 3요소 — 위에서 내려다본 스윙 도어에 힘 화살표를 그려 밀기 ───────── */
+const APP_VERSION = '2.0', APP_DATE = '2026-10-01';
+const { $, $$, el, icon, toast, announce, store } = SS;
+
+/* ── 과학 진실층: 모형 값 (도움말 ‘모형의 조건과 한계’와 같다) ── */
+const DOOR_L = 0.9, DOOR_M = 6;                          // 문짝 폭 0.9 m · 질량 6 kg (가벼운 스윙 도어)
+const I_DOOR = DOOR_M * DOOR_L * DOOR_L / 3;              // 한쪽 끝을 축으로 도는 판: ⅓ML² (kg·m²)
+const K_HINGE = 10;                                       // 바닥 경첩 용수철이 문을 닫으려는 정도 (N·m/rad)
+const C_HINGE = 2 * 0.7 * Math.sqrt(K_HINGE * I_DOOR);    // 감쇠비 0.7 — 한 번 열렸다 거의 곧장 닫힘
+const PUSH_T = 0.4;                                       // 한 번 미는 시간 (s)
+const STOP = 92 * Math.PI / 180;                          // 멈춤쇠
+const FR = { min: 5, max: 40, step: 5 }, RR = { min: 10, max: 90, step: 5 }, DIR_STEP = 15;
+
+/* ── 장면 좌표: 1 유닛 = 1 cm(평면도). 화살표는 설명 레이어 — 10 N = 16 유닛(한 칸) ── */
+const HX = 80, HY = 150, LEAF = 90, S = 1.6, HEAD = 9, VB = { x: 0, y: 10, w: 256, h: 272 };
+const rad = d => d * Math.PI / 180, deg = r => r * 180 / Math.PI;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const snap = (v, s) => Math.round(v / s) * s;
+const norm = d => ((d % 360) + 360) % 360;
+const josa = (w, a, b) => { const c = w.charCodeAt(w.length - 1) - 0xac00; return c >= 0 && c <= 11171 && c % 28 ? a : b; };  // 받침 있으면 a
+
+/* ── 상태 ── */
+const A0 = () => ({ r: 80, F: 20, dir: 90 });
+let A = Object.assign(A0(), store.get('arrow', {}));
+let mode = store.get('mode', 'free');
+let solved = store.get('solved', [false, false, false]);
+let qi = store.get('qi', 0);
+let hist = store.get('hist', []);          // 최근 두 번의 시도 [{A, peak}] — 비교·직전 고스트
+let showGhost = store.get('ghost', true);
+let fb = null;                             // 문 퍼즐 한 줄 피드백 {ok, text}
+const door = { th: 0, om: 0, t: 9, running: false, reported: true, pushA: null, pmax: 0, pmin: 0 };
+function save() { store.set('arrow', A); store.set('mode', mode); store.set('solved', solved); store.set('qi', qi); store.set('hist', hist); store.set('ghost', showGhost); }
+
+/* ── 기하 ── */
+const toSvg = (x, y) => [HX + x, HY - y];                 // 수학 좌표(cm, 위가 +) → SVG
+function arrowGeom(a, th) {
+  const [px, py] = toSvg(a.r * Math.cos(th), a.r * Math.sin(th));
+  const ux = Math.cos(rad(a.dir)), uy = -Math.sin(rad(a.dir)), len = a.F * S;
+  return { px, py, ux, uy, len, tx: px + ux * len, ty: py + uy * len };
+}
+/* 방향 말: 닫힌 문(오른쪽을 향함)과 이루는 각 + 어느 쪽으로 */
+function dirInfo(a) {
+  const rel = norm(a.dir);
+  let acute = rel % 180; if (acute > 90) acute = 180 - acute;
+  const s = Math.round(Math.sin(rad(rel)) * 1e6), c = Math.round(Math.cos(rad(rel)) * 1e6);
+  const side = s > 0 ? '방 안쪽으로' : s < 0 ? '복도 쪽으로' : c > 0 ? '문 끝 바깥쪽으로' : '경첩 쪽으로';
+  const rel2 = acute === 90 ? '문에 수직' : acute === 0 ? '문과 나란히' : `문과 ${acute}°`;
+  return { acute, side, text: `${rel2} · ${side}` };
+}
+const pointText = a => `경첩에서 ${a.r} cm`;
+function peakText(p) {
+  if (Math.abs(p) < 0.5) return { v: '0°', side: '움직이지 않았어요' };
+  return { v: `${Math.round(Math.abs(p))}°`, side: p > 0 ? '방 안쪽으로 열림' : '복도 쪽으로 열림' };
+}
+
+/* ═════════ 장면 만들기 ═════════ */
+const svg = $('#scene');
+let pxu = 2, hitR = 9;
+function buildStatic() {
+  const gB = $('#gBack'), gP = $('#gProt'), gW = $('#gWall');
+  // 방 이름 · 설명
+  el('text', { x: 250, y: 64, class: 'room end' }, gB).textContent = '방 안';
+  el('text', { x: 250, y: 252, class: 'room end' }, gB).textContent = '복도';
+  el('text', { x: 250, y: 270, class: 'cap-s end' }, gB).textContent = '위에서 본 스윙 도어';
+  // 화살표 눈금 범례 (결과 PNG에도 남는다)
+  const lg = el('g', { transform: 'translate(10 268)' }, gB);
+  el('path', { d: `M0 0H${10 * S}`, class: 'f-body', style: 'stroke-width:2.2' }, lg);
+  el('path', { d: `M0 -3V3M${10 * S} -3V3`, class: 'ptick major' }, lg);
+  el('text', { x: 10 * S + 4, y: 0, class: 'ptext start' }, lg).textContent = '한 칸 = 10 N';
+  // 문이 지나는 길(점선 반원)
+  el('path', { d: `M${HX + LEAF} ${HY} A${LEAF} ${LEAF} 0 0 0 ${HX} ${HY - LEAF}`, class: 'swing' }, gB);
+  el('path', { d: `M${HX + LEAF} ${HY} A${LEAF} ${LEAF} 0 0 1 ${HX} ${HY + LEAF}`, class: 'swing' }, gB);
+  // 각도기: 10°마다 눈금, 30°마다 숫자
+  for (let d = -90; d <= 90; d += 10) {
+    if (d === 0) continue;
+    const major = d % 30 === 0, r1 = major ? 93 : 96, r2 = 100;
+    const [x1, y1] = toSvg(r1 * Math.cos(rad(d)), r1 * Math.sin(rad(d))), [x2, y2] = toSvg(r2 * Math.cos(rad(d)), r2 * Math.sin(rad(d)));
+    el('line', { x1, y1, x2, y2, class: 'ptick' + (major ? ' major' : '') }, gP);
+    if (major) { const [lx, ly] = toSvg(109 * Math.cos(rad(d)), 109 * Math.sin(rad(d))); el('text', { x: lx, y: ly, class: 'ptext' }, gP).textContent = `${Math.abs(d)}°`; }
+  }
+  // 벽(단면 빗금) · 문틀
+  el('rect', { x: -10, y: HY - 6, width: HX - 4 + 10, height: 12, class: 'wall' }, gW);
+  el('rect', { x: HX + LEAF + 4, y: HY - 6, width: 140, height: 12, class: 'wall' }, gW);
+  el('rect', { x: HX - 5, y: HY - 6, width: 1.4, height: 12, class: 'jamb' }, gW);
+  el('rect', { x: HX + LEAF + 3.6, y: HY - 6, width: 1.4, height: 12, class: 'jamb' }, gW);
+  // 문짝(닫힌 자리에서 그리고 통째로 돌린다)
+  const gD = $('#gDoor');
+  el('rect', { x: HX, y: HY - 2, width: LEAF, height: 4, rx: 1.1, class: 'leaf' }, gD);
+  el('path', { d: `M${HX + 5} ${HY - .7}H${HX + 70}M${HX + 14} ${HY + .8}H${HX + 86}`, class: 'grain' }, gD);
+  for (const sgn of [-1, 1]) {                             // 양면 레버 손잡이 (경첩에서 78~88 cm)
+    el('rect', { x: HX + 76, y: sgn < 0 ? HY - 5.4 : HY + 2.2, width: 12, height: 3.2, rx: 1.4, class: 'lever' }, gD);
+    el('rect', { x: HX + 77, y: sgn < 0 ? HY - 5 : HY + 2.6, width: 10, height: .9, rx: .45, class: 'lever-hi' }, gD);
+  }
+  el('circle', { cx: HX, cy: HY, r: 3.4, class: 'pivot' }, gD);
+  el('circle', { cx: HX, cy: HY, r: 1, class: 'pivot-dot' }, gD);
+  const hitDoor = el('rect', { x: HX + 6, y: HY - 7, width: LEAF - 4, height: 14, class: 'door-hit', 'data-noexport': '' }, gD);
+  hitDoor.addEventListener('pointerdown', e => {           // 닫힌 문을 누르면 그 자리가 작용점
+    if (!canEdit() || door.running) return;
+    const p = SS.svgPoint(svg, e.clientX, e.clientY);
+    setA({ r: rFromPoint(p) }, 'point');
+  });
+  // 화살표
+  const gA = $('#gArrow');
+  el('line', { id: 'fBody', class: 'f-body' }, gA);
+  el('path', { id: 'fTicks', class: 'f-tick' }, gA);
+  el('path', { id: 'fHead', class: 'f-head' }, gA);
+  el('circle', { id: 'fRing', r: 6.5, class: 'f-ring', 'data-noexport': '' }, gA);
+  el('circle', { id: 'fDot', r: 3.3, class: 'f-dot' }, gA);
+  el('text', { id: 'fLabel', class: 'f-label' }, gA);
+  const hT = el('g', { id: 'hTail', class: 'handle', tabindex: 0, role: 'slider', 'aria-label': '작용점 — 문을 따라 끌기, 화살표 키로 5 cm씩', 'aria-valuemin': RR.min, 'aria-valuemax': RR.max, 'data-noexport': '' }, gA);
+  el('circle', { class: 'hit' }, hT); el('circle', { class: 'focus-ring' }, hT);
+  const hH = el('g', { id: 'hHead', class: 'handle', tabindex: 0, role: 'slider', 'aria-label': '힘의 크기와 방향 — 끌기, ↑↓ 크기 5 N, ←→ 방향 15°', 'aria-valuemin': FR.min, 'aria-valuemax': FR.max, 'data-noexport': '' }, gA);
+  el('circle', { class: 'hit' }, hH); el('circle', { class: 'focus-ring' }, hH);
+  bindDrag(hT, p => setA({ r: rFromPoint(p) }, 'point'));
+  bindDrag(hH, p => {
+    const g = arrowGeom(A, 0), dx = p.x - g.px, dy = g.py - p.y, d = Math.hypot(dx, dy);
+    const nF = clamp(snap(d / S, FR.step), FR.min, FR.max);
+    const nDir = d > 4 ? norm(snap(deg(Math.atan2(dy, dx)), DIR_STEP)) : A.dir;
+    setA({ F: nF, dir: nDir }, nF !== A.F && nDir !== A.dir ? 'both' : nF !== A.F ? 'mag' : 'dir');
+  });
+  hT.addEventListener('keydown', e => keyHandle(e, 'tail'));
+  hH.addEventListener('keydown', e => keyHandle(e, 'head'));
+  // 태그: 최대 각도 표시 · 지금 각도 · 직전 고스트
+  const gT = $('#gTags');
+  el('line', { id: 'peakMark', class: 'peak-mark' }, gT);
+  el('text', { id: 'peakT', class: 'peak-t', 'text-anchor': 'middle' }, gT);
+  const gG = $('#gGhost');
+  el('rect', { id: 'ghostLeaf', x: HX, y: HY - 2, width: LEAF, height: 4, rx: 1.1, class: 'ghost-leaf' }, gG);
+  el('text', { id: 'ghostT', class: 'ghost-t', 'text-anchor': 'middle' }, gG);
+}
+function rFromPoint(p) {
+  const x = p.x - HX, y = HY - p.y;
+  return clamp(snap(x, RR.step), RR.min, RR.max);   // 화살표는 닫힌 문 자리에서 고른다
+}
+let dragging = false;
+function bindDrag(g, onMove) {
+  g.addEventListener('pointerdown', e => {
+    if (!canEdit()) return;
+    e.preventDefault(); g.focus({ preventScroll: true });
+    g.setPointerCapture(e.pointerId); g.classList.add('dragging'); dragging = true;
+    const mv = ev => onMove(SS.svgPoint(svg, ev.clientX, ev.clientY));
+    const up = () => { g.classList.remove('dragging'); dragging = false; g.removeEventListener('pointermove', mv); g.removeEventListener('pointerup', up); g.removeEventListener('pointercancel', up); save(); };
+    g.addEventListener('pointermove', mv); g.addEventListener('pointerup', up); g.addEventListener('pointercancel', up);
+  });
+}
+function keyHandle(e, which) {
+  const k = e.key;
+  if (k === 'Enter') { e.preventDefault(); push(); return; }
+  if (!canEdit()) return;
+  if (which === 'tail' && ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(k)) {
+    e.preventDefault(); setA({ r: clamp(A.r + (k === 'ArrowRight' || k === 'ArrowUp' ? 1 : -1) * RR.step, RR.min, RR.max) }, 'point'); save();
+  }
+  if (which === 'head') {
+    if (k === 'ArrowUp' || k === 'ArrowDown') { e.preventDefault(); setA({ F: clamp(A.F + (k === 'ArrowUp' ? 1 : -1) * FR.step, FR.min, FR.max) }, 'mag'); save(); }
+    if (k === 'ArrowLeft' || k === 'ArrowRight') { e.preventDefault(); setA({ dir: norm(A.dir + (k === 'ArrowLeft' ? 1 : -1) * DIR_STEP) }, 'dir'); save(); }
+  }
+}
+
+/* ═════════ 그리기 ═════════ */
+function sizeText() {
+  const r = svg.getBoundingClientRect();
+  pxu = Math.max(.5, Math.min(r.width / VB.w, r.height / VB.h));
+  for (const n of [12, 13, 15]) svg.style.setProperty(`--t${n}`, `${(n / pxu).toFixed(2)}px`);
+  svg.style.setProperty('--h3', `${(3 / pxu).toFixed(3)}px`);   // 글자 테두리: 화면 기준 3px
+  hitR = Math.max(9, 22 / pxu);
+  $$('.hit').forEach(c => c.setAttribute('r', hitR));
+  $$('.focus-ring').forEach(c => c.setAttribute('r', hitR * .78));
+  render();
+}
+function render() {
+  const thD = deg(door.th);
+  $('#gDoor').setAttribute('transform', `rotate(${(-thD).toFixed(3)} ${HX} ${HY})`);
+  // 화살표: 미는 동안에는 문을 따라 돌고, 그 밖에는 닫힌 문 자리에 ‘다음에 줄 힘’으로 그린다
+  const pushing = pushingNow();
+  const g = arrowGeom(pushing ? door.pushA : A, pushing ? door.th : 0);
+  const bx = g.tx - g.ux * HEAD, by = g.ty - g.uy * HEAD, nx = -g.uy, ny = g.ux;
+  $('#fBody').setAttribute('x1', g.px); $('#fBody').setAttribute('y1', g.py); $('#fBody').setAttribute('x2', bx); $('#fBody').setAttribute('y2', by);
+  let t = '';
+  for (let n = 10; n < (pushing ? door.pushA : A).F - 2; n += 10) { const cx = g.px + g.ux * n * S, cy = g.py + g.uy * n * S; t += `M${(cx + nx * 2.2).toFixed(2)} ${(cy + ny * 2.2).toFixed(2)}L${(cx - nx * 2.2).toFixed(2)} ${(cy - ny * 2.2).toFixed(2)}`; }
+  $('#fTicks').setAttribute('d', t);
+  $('#fHead').setAttribute('d', `M${g.tx} ${g.ty}L${bx + nx * 4.6} ${by + ny * 4.6}L${bx - nx * 4.6} ${by - ny * 4.6}Z`);
+  $('#fDot').setAttribute('cx', g.px); $('#fDot').setAttribute('cy', g.py);
+  $('#fRing').setAttribute('cx', g.tx); $('#fRing').setAttribute('cy', g.ty);
+  // 크기 라벨은 머리 옆, 화살표에 수직으로 비켜서
+  const side = (nx * 0 + ny * -1) > 0 ? 1 : -1, off = 7 + 6 / pxu;
+  const lx = g.tx + g.ux * 4 + nx * off * side, ly = g.ty + g.uy * 4 + ny * off * side;
+  const fl = $('#fLabel'); fl.textContent = `${(pushing ? door.pushA : A).F} N`; fl.setAttribute('x', lx); fl.setAttribute('y', ly);
+  fl.setAttribute('text-anchor', Math.abs(g.ux) < .35 ? (nx * side >= 0 ? 'start' : 'end') : (g.ux >= 0 ? 'start' : 'end'));
+  const hT = $('#hTail'), hH = $('#hHead');
+  hT.querySelectorAll('circle').forEach(c => { c.setAttribute('cx', g.px); c.setAttribute('cy', g.py); });
+  hH.querySelectorAll('circle').forEach(c => { c.setAttribute('cx', g.tx); c.setAttribute('cy', g.ty); });
+  hT.setAttribute('aria-valuenow', A.r); hT.setAttribute('aria-valuetext', pointText(A));
+  hH.setAttribute('aria-valuenow', A.F); hH.setAttribute('aria-valuetext', `${A.F} N, ${dirInfo(A).text}`);
+  const gA = $('#gArrow');
+  gA.classList.toggle('pushing', pushing);
+  gA.classList.toggle('arrow-dim', door.running && !pushing && !dragging);
+  // 최대 각도 표시(이번 시도) · 지금 각도
+  const last = hist[hist.length - 1];
+  const pm = $('#peakMark'), pt = $('#peakT');
+  if (last && door.reported && Math.abs(last.peak) >= .5) {
+    const a = rad(last.peak), [x1, y1] = toSvg(90 * Math.cos(a), 90 * Math.sin(a)), [x2, y2] = toSvg(102 * Math.cos(a), 102 * Math.sin(a)), [tx, ty] = toSvg(120 * Math.cos(a), 120 * Math.sin(a));
+    pm.setAttribute('x1', x1); pm.setAttribute('y1', y1); pm.setAttribute('x2', x2); pm.setAttribute('y2', y2); pm.style.display = '';
+    pt.textContent = `${Math.round(Math.abs(last.peak))}°`; pt.setAttribute('x', tx); pt.setAttribute('y', ty); pt.style.display = '';
+  } else { pm.style.display = 'none'; pt.style.display = 'none'; }
+  // 직전 고스트: 이번 시도 바로 전의 최대 각도
+  const gh = hist.length >= 2 ? hist[hist.length - 2] : null, gl = $('#ghostLeaf'), gt = $('#ghostT');
+  if (showGhost && gh && Math.abs(gh.peak) >= .5 && door.reported) {
+    gl.setAttribute('transform', `rotate(${-gh.peak} ${HX} ${HY})`); gl.style.display = '';
+    const a = rad(gh.peak), [x, y] = toSvg(121 * Math.cos(a), 121 * Math.sin(a));   // 각도기 바깥, 이번 최대 각도 표시와 같은 자리 규칙
+    gt.textContent = `직전 ${Math.round(Math.abs(gh.peak))}°`; gt.setAttribute('x', x); gt.setAttribute('y', y); gt.style.display = '';
+  } else { gl.style.display = 'none'; gt.style.display = 'none'; }
+}
+
+/* ═════════ 레일 ═════════ */
+function flash(ids) { ids.forEach(id => { const e = $('#' + id); e.classList.remove('flash'); void e.offsetWidth; e.classList.add('flash'); }); }
+function syncRail() {
+  $('#vPoint').textContent = pointText(A);
+  $('#vMag').textContent = `${A.F} N`;
+  $('#vDir').textContent = dirInfo(A).text;
+  $$('[data-act="point-"]').forEach(b => b.disabled = A.r <= RR.min);
+  $$('[data-act="point+"]').forEach(b => b.disabled = A.r >= RR.max);
+  $$('[data-act="mag-"]').forEach(b => b.disabled = A.F <= FR.min);
+  $$('[data-act="mag+"]').forEach(b => b.disabled = A.F >= FR.max);
+  const ok = canPush(), pb = $('#pushBtn');
+  pb.setAttribute('aria-disabled', String(!ok));
+  pb.title = ok ? (door.running ? '문을 닫고 이 화살표의 힘으로 다시 밀어요 (Enter)' : '이 화살표의 힘으로 문을 0.4초 동안 밀어요 (Enter)') : '미는 중이에요';
+  $('#ghostTog').setAttribute('aria-pressed', String(showGhost));
+  const n = solved.filter(Boolean).length;
+  $('#puzCount').textContent = `${n}/3`;
+  $$('#modeSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === mode)));
+}
+function setA(patch, what) {
+  const before = { ...A };
+  Object.assign(A, patch);
+  const changed = [];
+  if (A.r !== before.r) changed.push('elPoint');
+  if (A.F !== before.F) changed.push('elMag');
+  if (A.dir !== before.dir) changed.push('elDir');
+  if (!changed.length) return;
+  if (!dragging) save();
+  flash(changed);
+  syncRail(); render();
+  if (fb && mode === 'quiz') { fb = null; renderGoal(); }
+}
+
+/* ── 결과 문장: 직전 시도와 무엇이 달라졌나 ── */
+function changeText(prev, cur) {
+  const p = peakText(cur.peak);
+  if (!prev) return Math.abs(cur.peak) < .5
+    ? `문이 움직이지 않았어요${dirInfo(cur.A).acute === 0 ? ' — 화살표가 문과 나란해요' : ''}. 요소 하나를 바꿔 다시 밀어 보세요.`
+    : `문이 ${cur.peak > 0 ? '방 안쪽' : '복도 쪽'}으로 <b class="num">${p.v}</b> 열렸어요. 이제 <b>요소 하나만</b> 바꿔 다시 밀어 보세요.`;
+  const ch = [];
+  if (prev.A.r !== cur.A.r) ch.push(['작용점', `경첩에서 ${prev.A.r} → ${cur.A.r} cm`]);
+  if (prev.A.F !== cur.A.F) ch.push(['크기', `${prev.A.F} → ${cur.A.F} N`]);
+  if (prev.A.dir !== cur.A.dir) ch.push(['방향', `${dirInfo(prev.A).text.split(' · ')[0]} → ${dirInfo(cur.A).text.split(' · ')[0]}`]);
+  const a0 = Math.round(prev.peak), a1 = Math.round(cur.peak), m0 = Math.abs(a0), m1 = Math.abs(a1);
+  let eff;
+  if (m1 < 1) eff = `문이 움직이지 않았어요${dirInfo(cur.A).acute === 0 ? ' — 화살표가 문과 나란해요' : ''}.`;
+  else if (m0 >= 1 && Math.sign(a0) !== Math.sign(a1)) eff = `문이 반대쪽(${a1 > 0 ? '방 안쪽' : '복도 쪽'})으로 <b class="num">${m1}°</b> 열렸어요.`;
+  else if (m1 === m0) eff = `문이 똑같이 <b class="num">${m1}°</b> 열렸어요.`;
+  else eff = `문이 ${m0}°에서 <b class="num">${m1}°</b>로 ${m1 > m0 ? '더 크게' : '더 작게'} 열렸어요.`;
+  if (!ch.length) return `같은 화살표로 다시 밀었더니 결과도 같아요 (<b class="num">${m1}°</b>).`;
+  if (ch.length === 1) return `<b>${ch[0][0]}</b>만 바꿨어요 (${ch[0][1]}). ${eff}`;
+  const names = ch.map(c => c[0]).join('·');
+  return `${names}${josa(names, '을', '를')} 한꺼번에 바꿨어요. ${eff} 하나씩 바꿔야 무엇 때문인지 알 수 있어요.`;
+}
+function renderResult() {
+  const cur = hist[hist.length - 1], prev = hist.length >= 2 ? hist[hist.length - 2] : null;
+  if (!cur) { $('#vPeak').textContent = '–'; $('#vPeakSide').textContent = '아직 밀지 않았어요'; $('#vPrev').textContent = ''; $('#vChange').innerHTML = '화살표를 그린 뒤 <b>문 밀기</b>를 눌러요.'; return; }
+  const p = peakText(cur.peak);
+  $('#vPeak').textContent = p.v; $('#vPeakSide').textContent = p.side;
+  $('#vPrev').textContent = prev ? `직전 ${peakText(prev.peak).v} · ${prev.A.F} N, ${pointText(prev.A)}, ${dirInfo(prev.A).text.split(' · ')[0]}` : '';
+  $('#vChange').innerHTML = changeText(prev, cur);
+}
+
+/* ═════════ 문 퍼즐 ═════════ */
+const PUZ = [
+  { goal: '20 N 이하의 힘으로 문을 40°보다 크게 열어 보세요.', check: (a, p) => a.F > 20 ? '힘이 20 N보다 커요. 20 N 이하로 줄여 볼까요?' : p > 40 ? true : p < -40 ? true : `${peakText(p).v} 열렸어요. 40°를 넘기려면 작용점이나 방향을 바꿔 볼까요?` },
+  { goal: '40 N으로 밀었는데도 문이 5°보다 작게 열리게 해 보세요.', check: (a, p) => a.F !== 40 ? '힘의 크기를 40 N으로 맞춰 주세요.' : Math.abs(p) < 5 ? true : `${peakText(p).v} 열렸어요. 문을 돌리지 못하는 방향이나 자리가 있을까요?` },
+  { goal: '문을 복도 쪽으로 50°~60° 사이만큼 열어 보세요.', check: (a, p) => p > 0.5 ? '문이 방 안쪽으로 열렸어요. 화살표가 복도 쪽을 향하게 해 볼까요?' : (p <= -50 && p >= -60) ? true : Math.abs(p) < 50 ? `복도 쪽으로 ${peakText(p).v} — 조금 더 크게 열어야 해요.` : `복도 쪽으로 ${peakText(p).v} — 조금 덜 열어야 해요.` },
+];
+function renderGoal() {
+  const g = $('#goal');
+  if (mode !== 'quiz') { g.innerHTML = ''; return; }
+  const done = solved.every(Boolean);
+  const dots = PUZ.map((_, i) => `<i class="${solved[i] ? 'on' : ''} ${i === qi && !done ? 'cur' : ''}"></i>`).join('');
+  if (done) {
+    g.innerHTML = `<div class="gt"><span>문 퍼즐 3/3</span><span class="dots" aria-hidden="true">${dots}</span></div>
+      <p class="done-t">세 퍼즐을 모두 풀었어요</p>
+      <p class="g-fb">크기·방향·작용점 가운데 하나만 달라도 문이 열리는 정도가 달라졌어요.</p>
+      <div class="g-row"><button class="btn small" data-act="qagain">${icon('reset')}다시 풀기</button><button class="btn small" data-act="qfree">자유 실험으로</button></div>
+      <a class="textlink" href="${SS.CHANNELS.yt}" target="_blank" rel="noopener noreferrer" aria-label="송쌤과학 유튜브 채널 (새 창)"><svg class="ic yt-ic" viewBox="0 0 24 24" aria-hidden="true">${SS.ICONS.yt}</svg>유튜브에서 더 보기</a>`;
+    return;
+  }
+  const P = PUZ[qi];
+  g.innerHTML = `<div class="gt"><span>문 퍼즐 ${qi + 1}/3${solved[qi] ? ' · 풀었어요' : ''}</span><span class="dots" aria-hidden="true">${dots}</span></div>
+    <p class="g-text">${P.goal}</p>
+    ${fb ? `<p class="g-fb ${fb.ok ? 'ok' : ''}">${fb.text}</p>` : ''}
+    <div class="g-row"><button class="btn small ghost" data-act="qprev" ${qi === 0 ? 'disabled' : ''}>${icon('chevL')}이전</button><button class="btn small ${solved[qi] ? 'primary' : ''}" data-act="qnext" ${qi === PUZ.length - 1 ? 'disabled' : ''}>다음 퍼즐${icon('chev')}</button></div>`;
+}
+function checkPuzzle(cur) {
+  if (mode !== 'quiz' || solved.every(Boolean)) return;
+  const r = PUZ[qi].check(cur.A, cur.peak);
+  if (r === true) {
+    solved[qi] = true; fb = { ok: true, text: qi < PUZ.length - 1 ? '성공! 다음 퍼즐로 가 볼까요?' : '성공!' };
+    if (solved.every(Boolean)) fb = null;
+    announce(`문 퍼즐 ${qi + 1} 성공`);
+  } else fb = { ok: false, text: r };
+  save(); renderGoal(); syncRail();
+}
+
+/* ═════════ 밀기 · 물리 ═════════ */
+/* 미는 0.4초 동안만 화살표를 못 바꾼다. 문이 흔들리는 중에 다시 밀면 먼저 0.25초 동안 문을 닫고 민다(매번 멈춘 문에서 시작). */
+const CLOSE_T = .25;
+const pushingNow = () => door.running && !door.closing && door.t < PUSH_T;
+const canEdit = () => !pushingNow();
+const canPush = () => !pushingNow() && !door.closing;
+const settled = () => !door.running;
+function startPush() {
+  door.th = 0; door.om = 0; door.closing = null;
+  door.t = 0; door.running = true; door.reported = false; door.pmax = 0; door.pmin = 0;
+}
+function push() {
+  if (!canPush()) return;
+  door.pushA = { ...A };
+  fb = null; if (mode === 'quiz') renderGoal();
+  if (door.running && (Math.abs(door.th) > 1e-3 || Math.abs(door.om) > 1e-3)) { door.closing = { from: door.th, t: 0 }; door.running = true; door.reported = true; }
+  else startPush();
+  syncRail(); render();
+}
+function report() {
+  door.reported = true;
+  const peak = Math.abs(door.pmax) >= Math.abs(door.pmin) ? door.pmax : door.pmin;
+  const pd = Math.round(deg(peak) * 10) / 10;
+  hist.push({ A: { ...door.pushA }, peak: Math.abs(pd) < .5 ? 0 : pd });
+  if (hist.length > 2) hist = hist.slice(-2);
+  save(); renderResult(); render(); syncRail();
+  const p = peakText(hist[hist.length - 1].peak);
+  announce(`문이 ${p.side === '움직이지 않았어요' ? '움직이지 않았어요' : `${p.side.replace(' 열림', '')} ${p.v} 열렸어요`}`);
+  checkPuzzle(hist[hist.length - 1]);
+}
+function step(dt) {
+  if (!door.running) return;
+  if (door.closing) {                                    // 다시 밀기 전에 문 닫기
+    door.closing.t += dt;
+    const u = Math.min(1, door.closing.t / CLOSE_T), e = 1 - Math.pow(1 - u, 3);
+    door.th = door.closing.from * (1 - e); door.om = 0;
+    if (u >= 1) startPush();
+    render(); return;
+  }
+  const n = Math.max(1, Math.ceil(dt * 240)), h = dt / n;
+  for (let i = 0; i < n; i++) {
+    let tau = 0;
+    if (door.t < PUSH_T) {
+      const a = door.pushA, fx = a.F * Math.cos(rad(a.dir)), fy = a.F * Math.sin(rad(a.dir));
+      tau = (a.r / 100) * (Math.cos(door.th) * fy - Math.sin(door.th) * fx);   // 작용점까지 거리 × 문에 수직인 힘 성분
+    }
+    const acc = (tau - K_HINGE * door.th - C_HINGE * door.om) / I_DOOR;
+    door.om += acc * h; door.th += door.om * h; door.t += h;
+    if (door.th > STOP) { door.th = STOP; if (door.om > 0) door.om *= -.2; }
+    if (door.th < -STOP) { door.th = -STOP; if (door.om < 0) door.om *= -.2; }
+    if (!door.reported) { door.pmax = Math.max(door.pmax, door.th); door.pmin = Math.min(door.pmin, door.th); }
+  }
+  if (!door.reported && door.t >= PUSH_T && (door.th * door.om < 0 || Math.abs(door.om) < 1e-3)) report();
+  if (door.reported && door.t > PUSH_T + .3 && Math.abs(door.th) < .002 && Math.abs(door.om) < .006) { door.th = 0; door.om = 0; door.running = false; }
+  render();
+  const cp = canPush(); if (cp !== lastCan) { lastCan = cp; syncRail(); }
+}
+let lastCan = true;
+
+/* ═════════ 원리 카드 · 도움말 ═════════ */
+function theory() {
+  const last = hist[hist.length - 1];
+  return `<article class="tcard"><h3>힘을 화살표로 나타내기</h3>
+    <figure><svg viewBox="0 0 320 128" role="img" aria-label="화살표의 시작점은 작용점, 길이는 크기, 머리 방향은 힘의 방향">
+      <rect x="0" y="0" width="320" height="128" style="fill:var(--stage)"/>
+      <rect x="34" y="52" width="92" height="46" rx="4" style="fill:var(--wood);stroke:var(--wood-lo);stroke-width:1.2"/>
+      <line x1="126" y1="75" x2="252" y2="75" style="stroke:var(--force);stroke-width:5"/>
+      <path d="M150 69v12M180 69v12M210 69v12M240 69v12" style="stroke:var(--force-ink);stroke-width:1.6"/>
+      <path d="M270 75 250 64v22Z" style="fill:var(--force)"/><circle cx="126" cy="75" r="5.5" style="fill:var(--force);stroke:var(--stage);stroke-width:2"/>
+      <path d="M126 82v26h-8M198 82v26M262 66V26" style="fill:none;stroke:var(--text-2);stroke-width:1"/>
+      <path d="M126 88 126 92M126 92" style="stroke:var(--text-2)"/>
+      <text x="112" y="118" style="fill:var(--text-1);font:700 13px var(--font-ui);text-anchor:end">작용점</text>
+      <text x="198" y="120" style="fill:var(--text-1);font:700 13px var(--font-ui);text-anchor:middle">길이 = 크기</text>
+      <text x="262" y="20" style="fill:var(--text-1);font:700 13px var(--font-ui);text-anchor:middle">머리 = 방향</text>
+      <text x="80" y="42" style="fill:var(--text-2);font:500 12px var(--font-ui);text-anchor:middle">물체</text>
+    </svg></figure>
+    <p class="def">힘은 화살표로 나타내요. 시작점은 작용점, 길이는 크기, 머리가 가리키는 쪽은 방향이에요.</p>
+    <p>이 세 가지를 <b>힘의 3요소</b>라고 해요. 힘의 크기는 N(뉴턴) 단위로 나타내고, 한 그림 안에서는 같은 길이가 같은 크기를 나타내도록 한 칸의 값을 정해요.</p>
+    <p class="link">이 실험의 화살표도 한 칸이 10 N이에요. ${A.F} N 화살표는 ${A.F / 10}칸 길이예요.</p></article>
+  <article class="tcard"><h3>하나만 달라도 효과가 달라져요</h3>
+    <figure><svg viewBox="0 0 320 120" role="img" aria-label="같은 크기의 힘이라도 작용점이나 방향이 다르면 문이 열리는 정도가 달라진다">
+      <rect x="0" y="0" width="320" height="120" style="fill:var(--stage)"/>
+      ${[0, 1, 2].map(i => { const ox = 14 + i * 104, lab = ['크기가', '방향이', '작용점이'][i];
+        const arrows = [[[70, 12, 90], [70, 28, 90]], [[70, 20, 90], [70, 20, 30]], [[80, 20, 90], [30, 20, 90]]][i];
+        return `<g transform="translate(${ox} 0)"><rect x="4" y="74" width="80" height="5" rx="1.5" style="fill:var(--wood)"/><circle cx="4" cy="76.5" r="3" style="fill:var(--metal-lo)"/>
+          ${arrows.map(([r, f, d], j) => { const x = 4 + r, y = 76.5, L = f * 1.6, ex = x + Math.cos(d * Math.PI / 180) * L, ey = y - Math.sin(d * Math.PI / 180) * L; return `<line x1="${x}" y1="${y}" x2="${ex}" y2="${ey}" style="stroke:var(--force);stroke-width:3;opacity:${j ? .45 : 1}"/><circle cx="${ex}" cy="${ey}" r="3" style="fill:var(--force);opacity:${j ? .45 : 1}"/>`; }).join('')}
+          <text x="44" y="104" style="fill:var(--text-1);font:700 13px var(--font-ui);text-anchor:middle">${lab} 다름</text></g>`; }).join('')}
+    </svg></figure>
+    <p class="def">크기·방향·작용점 가운데 하나만 달라도 힘이 물체에 주는 효과가 달라져요.</p>
+    <p>문 손잡이가 경첩에서 먼 쪽에 달린 것도 이 때문이에요. 같은 힘이라도 문 끝을 문에 수직으로 밀어야 문이 잘 열려요.</p>
+    <p class="link">${last ? `방금 ${last.A.F} N · ${pointText(last.A)} · ${dirInfo(last.A).text.split(' · ')[0]}로 밀었을 때 문이 ${peakText(last.peak).v} 열렸어요. 요소 하나만 바꿔 비교해 보세요.` : '실험에서 요소 하나만 바꿔 가며 문을 밀어 보면 차이가 보여요.'}</p></article>`;
+}
+const HELP = {
+  how: `<ol><li>화살표 끝 <b>▶</b>을 끌면 힘의 <b>크기</b>(길이)와 <b>방향</b>이, 시작점 <b>●</b>을 끌면 <b>작용점</b>이 바뀌어요. 문을 누르면 그 자리가 작용점이 돼요. 오른쪽 줄의 단추로도 바꿀 수 있어요.</li>
+    <li><b>문 밀기</b>를 누르면 그 힘으로 문을 0.4초 동안 밀어요. 문이 열렸다 스스로 닫히고, 가장 크게 열린 각도가 각도기에 남아요.</li>
+    <li>요소 <b>하나만</b> 바꿔 다시 밀고, 점선으로 남은 <b>직전 결과</b>와 비교해요.</li>
+    <li><b>문 퍼즐</b>에서 세 문제를 풀어 봐요.</li></ol>`,
+  keys: '화살표 머리(▶)에 포커스: <kbd>↑</kbd><kbd>↓</kbd> 크기 5 N · <kbd>←</kbd><kbd>→</kbd> 방향 15° · 시작점(●)에 포커스: <kbd>←</kbd><kbd>→</kbd> 작용점 5 cm · <kbd>Enter</kbd> 문 밀기',
+  model: `<ul><li>위에서 내려다본 <b>스윙 도어</b>(양쪽으로 열리는 문)예요. 폭 90 cm, 질량 6 kg이고 한쪽 끝의 바닥 경첩을 축으로 돌아요. 경첩 속 용수철이 문을 다시 닫아요.</li>
+    <li>힘은 0.4초 동안 같은 크기·같은 방향으로 작용한다고 가정했어요. 크기는 5 N, 방향은 15°, 작용점은 5 cm 간격으로 골라요.</li>
+    <li>화살표 길이는 힘의 크기를 나타내요(한 칸 = 10 N). 문 그림의 길이(cm)와는 다른 눈금이에요.</li>
+    <li>문이 열리는 각도는 힘의 크기, 경첩에서 작용점까지의 거리, 문과 이루는 방향으로 계산한 모형 값이에요. 실제 문은 무게와 경첩에 따라 값이 달라요.</li></ul>`,
+  source: '<p>2022 개정 중학교 과학 ‘힘의 작용’ — [9과05-01] 물체에 작용하는 힘을 화살표를 이용하여 나타내고, 힘의 평형을 이루는 조건을 설명할 수 있다. 교과서에서 흔히 쓰는 ‘문 밀기’ 예시를 직접 해 보는 실험으로 바꿨어요. 이전 판(세 칸 인포그래픽)을 한 장면으로 다시 만들었어요.</p>',
+  wipe: '화살표 설정, 직전 결과, 문 퍼즐 진행',
+};
+
+/* ═════════ 이벤트 · 시작 ═════════ */
+function capture() {
+  const last = hist[hist.length - 1];
+  return {
+    svg, flashEl: $('#stage'),
+    cond: `작용점 ${pointText(A)} · 크기 ${A.F} N · 방향 ${dirInfo(A).text}`,
+    state: last ? `최근 시도: ${last.A.F} N, ${pointText(last.A)}, ${dirInfo(last.A).text.split(' · ')[0]} → 문이 열린 최대 각도 ${peakText(last.peak).v} (${peakText(last.peak).side})${hist.length >= 2 ? ` · 직전 ${peakText(hist[0].peak).v}` : ''}` : '아직 문을 밀지 않았어요',
+  };
+}
+function bind() {
+  $('#pushBtn').innerHTML = `${icon('push')}문 밀기`;
+  $('#resetBtn').innerHTML = `${icon('reset')}처음 화살표로`;
+  $('[data-act="point-"]').innerHTML = icon('chevL'); $('[data-act="point+"]').innerHTML = icon('chev');
+  $('[data-act="mag-"]').innerHTML = icon('minus'); $('[data-act="mag+"]').innerHTML = icon('plus');
+  $('[data-act="dir+"]').innerHTML = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12a7 7 0 1 0 2-5"/><path d="M5 3.5V8h4.5"/></svg>';
+  $('[data-act="dir-"]').innerHTML = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2-5"/><path d="M19 3.5V8h-4.5"/></svg>';
+  $('#pushBtn').addEventListener('click', push);
+  $('#resetBtn').addEventListener('click', () => {
+    A = A0(); hist = []; door.th = 0; door.om = 0; door.running = false; door.reported = true; fb = null;
+    save(); syncRail(); renderResult(); renderGoal(); render(); announce('화살표를 처음 상태로 돌렸어요. 퍼즐 진행은 그대로예요.');
+  });
+  $('#ghostTog').addEventListener('click', () => { showGhost = !showGhost; save(); syncRail(); render(); });
+  $('#modeSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; mode = b.dataset.v; fb = null; save(); syncRail(); renderGoal(); });
+  $('#lab').addEventListener('click', e => {
+    const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+    const a = b.dataset.act;
+    if (a.startsWith('point') || a.startsWith('mag') || a.startsWith('dir')) {
+      if (!canEdit()) return;
+      const d = a.endsWith('+') ? 1 : -1;
+      if (a.startsWith('point')) setA({ r: clamp(A.r + d * RR.step, RR.min, RR.max) }, 'point');
+      if (a.startsWith('mag')) setA({ F: clamp(A.F + d * FR.step, FR.min, FR.max) }, 'mag');
+      if (a.startsWith('dir')) setA({ dir: norm(A.dir + d * DIR_STEP) }, 'dir');
+      return;
+    }
+    if (a === 'qprev') { qi = Math.max(0, qi - 1); fb = null; save(); renderGoal(); }
+    if (a === 'qnext') { qi = Math.min(PUZ.length - 1, qi + 1); fb = null; save(); renderGoal(); }
+    if (a === 'qagain') { solved = [false, false, false]; qi = 0; fb = null; save(); renderGoal(); syncRail(); }
+    if (a === 'qfree') { mode = 'free'; save(); syncRail(); renderGoal(); }
+  });
+}
+buildStatic(); bind();
+SS.init({
+  id: 'three-force', title: '힘의 3요소', file: '힘의3요소', version: APP_VERSION, date: APP_DATE,
+  help: HELP, theory, capture,
+  onResize: sizeText,
+  onKey: e => { if (e.key === 'Enter' && e.target === document.body) { e.preventDefault(); push(); } },
+  onWipe: () => { A = A0(); hist = []; mode = 'free'; solved = [false, false, false]; qi = 0; fb = null; showGhost = true; door.th = 0; door.om = 0; door.running = false; door.reported = true; syncRail(); renderResult(); renderGoal(); render(); },
+});
+syncRail(); renderResult(); renderGoal(); sizeText();
+SS.loop(step);
+window.ThreeForce = { A, door, hist: () => hist, push, step, setA, render, PUZ, state: () => ({ A, door: { ...door }, hist, mode, solved, qi }) };
+
+</script>
 </body>
 </html>
