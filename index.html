@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
-<meta name="version" content="2.0">
-<meta name="description" content="위에서 내려다본 스윙 도어에 힘 화살표를 직접 그려 밀어 보며, 힘의 크기·방향·작용점이 달라지면 힘의 효과가 어떻게 달라지는지 알아보는 중학교 과학 가상실험실">
+<meta name="version" content="2.1">
+<meta name="description" content="위에서 내려다본 스윙 도어에 힘 화살표를 그려 밀어 보며 힘의 크기·방향·작용점이 달라지면 효과가 어떻게 달라지는지 알아보고, 용수철저울 2개로 클립을 당겨 두 힘의 평형 조건을 찾는 중학교 과학 가상실험실">
 <meta property="og:title" content="송쌤과학 가상실험실 | 힘의 3요소">
 <meta property="og:description" content="화살표의 시작점·길이·방향을 바꿔 문을 밀어 보세요 — 무엇을 바꾸면 문이 더 크게 열릴까요?">
 <meta property="og:type" content="website">
@@ -204,6 +204,9 @@ dialog::backdrop{background:var(--scrim)}
 .tcard .def{font:700 15px/1.6 var(--font-ui);margin-bottom:6px}
 .tcard p{font-size:15px;line-height:1.7;color:var(--text-1)}
 .tcard p+p{margin-top:6px}
+.tcard .tb-list{margin:4px 0 0;padding:0 0 0 18px;display:grid;gap:5px}
+.tcard .tb-list li{font-size:14px;line-height:1.6;color:var(--text-1)}
+.tcard .tb-list b{font-weight:800}
 .tcard .link{margin-top:10px;padding:10px 12px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 var(--r-1) var(--r-1) 0;font-size:15px;line-height:1.65}
 .toast{position:fixed;left:50%;bottom:calc(20px + var(--strip-h) + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;display:flex;align-items:center;gap:10px;max-width:min(360px,calc(100vw - 24px));padding:10px 14px;border-radius:var(--r-2);background:var(--surface-1);border:1px solid var(--line-2);box-shadow:var(--edge-hi),var(--shadow-2);font:500 13px/1.5 var(--font-ui);color:var(--text-1)}
 .toast.error{border-color:var(--danger)}
@@ -238,6 +241,7 @@ dialog::backdrop{background:var(--scrim)}
   --wall-fill:#223244;--wall-hatch:#3f566e;--wall-edge:#4d6680;
   --arc:#36506a;--prot:#6f879e;--prot-text:#b0c0cf;--ghost:#9fb2c4;--peak:#ff7b5c;
   --metal-hi:#e3e8ee;--metal-lo:#56606b;--floor-label:#8ea2b4;
+  --mat:#1b2b3c;--mat-edge:#36506a;--clip:#d7dee6;
 }
 :root[data-theme="light"]{
   --force:#cf3a1c;--force-ink:#ffffff;--force-soft:#cf3a1c26;
@@ -245,13 +249,46 @@ dialog::backdrop{background:var(--scrim)}
   --wall-fill:#dfe6ec;--wall-hatch:#98a8b7;--wall-edge:#8a9aab;
   --arc:#b7c6d3;--prot:#7d90a2;--prot-text:#44596b;--ghost:#6d8193;--peak:#cf3a1c;
   --metal-hi:#f4f7fa;--metal-lo:#5f6a76;--floor-label:#566b7e;
+  --mat:#e6eef4;--mat-edge:#a9bccb;--clip:#4a5560;
 }
 
 /* 배치: 장면이 주인공, 레일 340px */
 .lab{height:100%;display:grid;grid-template-columns:minmax(0,1fr) 340px}
 .stage-wrap{position:relative;min-width:0;min-height:0;background:var(--stage);border-right:1px solid var(--line-1);overflow:hidden}
 .stage{position:absolute;inset:0}
-#scene{position:absolute;inset:0;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none}
+#scene,#sceneB{position:absolute;inset:0;width:100%;height:100%;touch-action:none;user-select:none;-webkit-user-select:none}
+#sceneB[hidden]{display:none}
+.door-rail,.bal-rail{display:flex;flex-direction:column;gap:20px}
+.door-rail[hidden],.bal-rail[hidden]{display:none}
+/* 두 힘의 평형 장면 */
+.b-desk{fill:var(--mat);stroke:var(--mat-edge);stroke-width:.6}
+.b-grain{stroke:var(--mat-edge);stroke-width:.25;opacity:.45}
+.b-house{fill:var(--metal-hi);stroke:var(--metal-lo);stroke-width:.5}
+.b-win{fill:var(--stage);opacity:.85}
+.b-tick{stroke:var(--prot-text);stroke-width:.35}
+.b-num{fill:var(--prot-text);font-size:var(--t12);font-weight:600;text-anchor:middle;dominant-baseline:hanging}
+.b-ptr{stroke:var(--peak);stroke-width:1.1}
+.b-rod{stroke:var(--metal-lo);stroke-width:1.4}
+.b-ring{fill:none;stroke:var(--metal-lo);stroke-width:1.6}
+.b-hit{fill:transparent;cursor:ew-resize}
+.b-hit:focus{outline:none}
+.b-hit:focus-visible+.b-ring,.b-grip.dragging .b-ring{stroke:var(--accent)}
+.b-clip{fill:none;stroke:var(--clip);stroke-width:1.3}
+.b-clip-sh{fill:none;stroke:#000;stroke-width:1.2;opacity:.25}
+.b-ghost{fill:none;stroke:var(--ghost);stroke-width:.6;stroke-dasharray:1.4 1.2}
+.b-pin{fill:var(--accent);fill-opacity:.18;stroke:var(--accent);stroke-width:.9}
+.b-pin-t{fill:var(--text-1);font-size:var(--t12);font-weight:700;text-anchor:middle;paint-order:stroke;stroke:var(--mat);stroke-width:var(--h3,3px);stroke-linejoin:round}
+.b-f{stroke:var(--force);stroke-width:1.8}.b-fh{fill:var(--force)}
+.b-net{stroke:var(--text-1);stroke-width:1.8}.b-lead{stroke:var(--text-2);stroke-width:.5;stroke-dasharray:1.2 1}.b-neth{fill:var(--text-1)}
+.b-ft{fill:var(--force);font-size:var(--t13);font-weight:800;paint-order:stroke;stroke:var(--mat);stroke-width:var(--h3,3px);stroke-linejoin:round;font-variant-numeric:tabular-nums}
+.b-nt{fill:var(--text-1);font-size:var(--t13);font-weight:800;text-anchor:middle;dominant-baseline:hanging;paint-order:stroke;stroke:var(--mat);stroke-width:var(--h3,3px);stroke-linejoin:round;font-variant-numeric:tabular-nums}
+.b-cap{fill:var(--text-2);font-size:var(--t12);font-weight:500}
+.bsteps{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.bsteps li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:8px;align-items:start;font:500 13px/1.5 var(--font-ui);color:var(--text-2)}
+.bsteps li.on{color:var(--text-1)}
+.bsteps .bk{width:18px;height:18px;margin-top:1px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--text-2);font:800 11px/1 var(--font-ui)}
+.bsteps li.on .bk{background:var(--ok);border-color:var(--ok);color:var(--surface-1)}
+.bsteps .bk svg{width:11px;height:11px;stroke-width:2.8}
 .stage-tools{position:absolute;top:12px;right:12px;z-index:3}
 .stage-note{position:absolute;left:14px;top:14px;z-index:2;display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:var(--r-2);background:color-mix(in oklab,var(--stage) 86%,transparent);border:1px solid var(--line-1);font:500 13px/1.3 var(--font-ui);color:var(--text-2);pointer-events:none}
 .stage-note .k{color:var(--text-1);font-weight:700}
@@ -423,6 +460,9 @@ dialog::backdrop{background:var(--scrim)}
         <g id="gArrow"></g>
         <g id="gTags"></g>
       </svg>
+      <svg id="sceneB" viewBox="0 0 260 150" role="group" aria-label="위에서 내려다본 책상. 클립 양쪽에 용수철저울을 걸었어요. 저울 끝 고리를 끌면 당기는 힘이 바뀌어요." hidden>
+        <g id="bDesk"></g><g id="bGhost"></g><g id="bScales"></g><g id="bClip"></g><g id="bForces"></g><g id="bTags"></g>
+      </svg>
     </div>
     <p class="stage-note" id="stageNote"><span class="k">▶ 끌기</span> 크기·방향 <span class="dot">·</span> <span class="k">● 끌기</span> 작용점</p>
     <div class="stage-tools"><button class="save-btn" id="saveBtn" aria-label="실험 결과를 PNG 이미지로 저장 (C)" title="실험 결과를 PNG 이미지로 저장 (C)"></button></div>
@@ -433,11 +473,13 @@ dialog::backdrop{background:var(--scrim)}
       <div class="seg" id="modeSeg" role="group" aria-label="활동 고르기">
         <button data-v="free" aria-pressed="true">자유 실험</button>
         <button data-v="quiz" aria-pressed="false">문 퍼즐 <span class="num" id="puzCount">0/3</span></button>
+        <button data-v="bal" aria-pressed="false">두 힘의 평형</button>
       </div>
     </div>
     <div class="rail-scroll" id="railScroll">
       <div class="goal" id="goal" aria-live="polite"></div>
 
+      <div class="door-rail" id="doorRail">
       <div class="els" role="group" aria-labelledby="elsCap">
         <h3 class="cap" id="elsCap">힘의 3요소 <span class="cap-note">화살표 한 칸 = 10 N</span></h3>
         <div class="el" id="elPoint">
@@ -474,6 +516,38 @@ dialog::backdrop{background:var(--scrim)}
         <div class="readout"><span class="v" id="vPeak">–</span><span class="u" id="vPeakSide">아직 밀지 않았어요</span></div>
         <p class="prev num" id="vPrev"></p>
         <p class="change note-slot" id="vChange">화살표를 그린 뒤 <b>문 밀기</b>를 눌러요.</p>
+      </div>
+      </div>
+
+      <div class="bal-rail" id="balRail" hidden>
+        <div class="els" role="group" aria-labelledby="balCap">
+          <h3 class="cap" id="balCap">용수철저울로 당기는 힘 <span class="cap-note">0.5 N씩</span></h3>
+          <div class="el">
+            <svg class="glyph" viewBox="0 0 28 16" aria-hidden="true"><path d="M26 8H6" class="g-body"/><path d="M1 8l7-5v10Z" class="g-head"/></svg>
+            <div class="el-txt"><span class="el-name">왼쪽 저울</span><span class="el-val num" id="vFL">2.0 N</span></div>
+            <div class="step">
+              <button class="icon-btn sm" data-bal="L-" aria-label="왼쪽 저울의 힘 0.5 N 줄이기" title="0.5 N 줄이기"></button>
+              <button class="icon-btn sm" data-bal="L+" aria-label="왼쪽 저울의 힘 0.5 N 늘리기" title="0.5 N 늘리기"></button>
+            </div>
+          </div>
+          <div class="el">
+            <svg class="glyph" viewBox="0 0 28 16" aria-hidden="true"><path d="M2 8h20" class="g-body"/><path d="M27 8l-7-5v10Z" class="g-head"/></svg>
+            <div class="el-txt"><span class="el-name">오른쪽 저울</span><span class="el-val num" id="vFR">2.0 N</span></div>
+            <div class="step">
+              <button class="icon-btn sm" data-bal="R-" aria-label="오른쪽 저울의 힘 0.5 N 줄이기" title="0.5 N 줄이기"></button>
+              <button class="icon-btn sm" data-bal="R+" aria-label="오른쪽 저울의 힘 0.5 N 늘리기" title="0.5 N 늘리기"></button>
+            </div>
+          </div>
+        </div>
+        <div class="result">
+          <div class="res-top"><span class="lbl">클립에 작용하는 합력</span></div>
+          <div class="readout"><span class="v num" id="vNet">0.0</span><span class="u" id="vNetSide">N</span></div>
+          <p class="change note-slot" id="vBal" aria-live="polite"></p>
+        </div>
+        <div class="bal-steps">
+          <h3 class="cap">교과서 탐구 순서 <span class="cap-note">천재 154쪽</span></h3>
+          <ol class="bsteps" id="bSteps"></ol>
+        </div>
       </div>
     </div>
     <div class="rail-foot">
@@ -797,7 +871,7 @@ const SS = (() => {
 
 /* ═══════ 이 실험실 ═══════ */
 /* ───────── 힘의 3요소 — 위에서 내려다본 스윙 도어에 힘 화살표를 그려 밀기 ───────── */
-const APP_VERSION = '2.0', APP_DATE = '2026-10-01';
+const APP_VERSION = '2.1', APP_DATE = '2026-10-01';
 const { $, $$, el, icon, toast, announce, store } = SS;
 
 /* ── 과학 진실층: 모형 값 (도움말 ‘모형의 조건과 한계’와 같다) ── */
@@ -1019,6 +1093,18 @@ function syncRail() {
   $$('[data-act="point+"]').forEach(b => b.disabled = A.r >= RR.max);
   $$('[data-act="mag-"]').forEach(b => b.disabled = A.F <= FR.min);
   $$('[data-act="mag+"]').forEach(b => b.disabled = A.F >= FR.max);
+  const isBal = mode === 'bal';
+  svg.toggleAttribute('hidden', isBal); svgB.toggleAttribute('hidden', !isBal);
+  $('#doorRail').hidden = isBal; $('#balRail').hidden = !isBal;
+  $('#stageNote').innerHTML = isBal ? '<span class="k">○ 고리 끌기</span> 당기는 힘 <span class="dot">·</span> <span class="k">클립 놓기</span> 결과 보기' : '<span class="k">▶ 끌기</span> 크기·방향 <span class="dot">·</span> <span class="k">● 끌기</span> 작용점';
+  if (isBal) {
+    const pb = $('#pushBtn'); pb.innerHTML = bclip.pinned ? `${icon('play')}클립 놓기` : `${icon('reset')}클립 다시 누르기`;
+    pb.setAttribute('aria-disabled', 'false'); pb.title = bclip.pinned ? '누르던 손가락을 떼어 클립을 놓아요 (Enter)' : '클립을 멈춘 자리에서 다시 눌러요 (Enter)';
+    $('#resetBtn').innerHTML = `${icon('reset')}처음 상태로`;
+    $$('#modeSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === mode)));
+    syncBal(); return;
+  }
+  $('#pushBtn').innerHTML = `${icon('push')}문 밀기`; $('#resetBtn').innerHTML = `${icon('reset')}처음 화살표로`;
   const ok = canPush(), pb = $('#pushBtn');
   pb.setAttribute('aria-disabled', String(!ok));
   pb.title = ok ? (door.running ? '문을 닫고 이 화살표의 힘으로 다시 밀어요 (Enter)' : '이 화살표의 힘으로 문을 0.4초 동안 밀어요 (Enter)') : '미는 중이에요';
@@ -1166,6 +1252,145 @@ function step(dt) {
 }
 let lastCan = true;
 
+/* ═════════ 두 힘의 평형 — 용수철저울 2개로 클립 당기기 (천재 154~155쪽 탐구) ═════════
+   위에서 본 책상(1 유닛 = 1 mm). 클립을 손가락으로 누른 채 양쪽 저울을 당겨 두고, 클립을 놓으면
+   더 큰 힘 쪽으로 움직이다가 두 저울의 눈금이 같아지는 곳(합력 0)에서 멈춘다. 마찰은 넣지 않았다. */
+const svgB = $('#sceneB');
+const B_Y = 78, B_XC = 130, B_D0 = 72, B_U = 6, B_FA = 8, B_FMAX = 5;   // 클립 중심 높이 · 처음 자리 · 0 N일 때 고리~클립 거리 · 1 N마다 늘어나는 길이(mm) · 화살표 1 N = 8 mm
+const B_KA = 108, B_C = 7.2;                                           // 가속 상수(mm/s² per N) · 감쇠
+let BAL = Object.assign({ FL: 2, FR: 4, steps: {} }, store.get('bal', {}));
+const bclip = { x: B_XC, v: 0, pinned: true, moving: false, xL: 0, xR: 0, start: null };
+function bSetRings() { bclip.xL = bclip.x - B_D0 - BAL.FL * B_U; bclip.xR = bclip.x + B_D0 + BAL.FR * B_U; }
+bSetRings();
+const bForce = () => ({ L: Math.max(0, (bclip.x - bclip.xL - B_D0) / B_U), R: Math.max(0, (bclip.xR - bclip.x - B_D0) / B_U) });
+const f1b = v => (Math.round(v * 10) / 10).toFixed(1);
+function saveBal() { store.set('bal', BAL); }
+function buildB() {
+  const d = $('#bDesk');
+  el('rect', { x: 6, y: 34, width: 248, height: 98, rx: 6, class: 'b-desk' }, d);          // 책상 위 실험 매트(위에서 본 모습)
+  for (let x = 26; x < 254; x += 20) el('line', { x1: x, y1: 34, x2: x, y2: 132, class: 'b-grain' }, d);
+  for (let y = 54; y < 132; y += 20) el('line', { x1: 6, y1: y, x2: 254, y2: y, class: 'b-grain' }, d);
+  el('text', { x: 8, y: 144, class: 'b-cap' }, d).textContent = '위에서 본 책상 · 용수철저울 2개와 클립';
+}
+function scaleG(g, side, ring, clipX) {      // side: -1 왼쪽, +1 오른쪽 · ring: 고리 x
+  const s = side, h0 = ring - s * 5, h1 = ring - s * 55, F = Math.max(0, (Math.abs(clipX - ring) - B_D0) / B_U);
+  const xa = Math.min(h0, h1);
+  el('rect', { x: xa, y: B_Y - 7, width: 50, height: 14, rx: 3, class: 'b-house' }, g);
+  el('rect', { x: xa + 3, y: B_Y - 2.4, width: 44, height: 4.8, rx: 1, class: 'b-win' }, g);
+  for (let n = 0; n <= B_FMAX * 2; n++) {    // 0.5 N 눈금, 1 N마다 숫자
+    const x = ring - s * (20 + n * B_U / 2), maj = n % 2 === 0;
+    el('line', { x1: x, y1: B_Y - 7, x2: x, y2: B_Y - (maj ? 3.6 : 5.2), class: 'b-tick' }, g);
+    if (maj && pxuB > 1.6) el('text', { x, y: B_Y + 7.6, class: 'b-num' }, g).textContent = n / 2;
+  }
+  const p = ring - s * (20 + F * B_U);
+  el('line', { x1: p, y1: B_Y - 3.6, x2: p, y2: B_Y + 3.6, class: 'b-ptr' }, g);
+  el('line', { x1: h1, y1: B_Y, x2: clipX - s * 7, y2: B_Y, class: 'b-rod' }, g);
+  const grip = el('g', { class: 'b-grip', 'data-side': side < 0 ? 'L' : 'R' }, g);
+  const hit = el('circle', { cx: ring, cy: B_Y, r: Math.max(7, 20 / pxuB), class: 'b-hit', tabindex: 0, role: 'slider', 'aria-label': `${side < 0 ? '왼쪽' : '오른쪽'} 저울 고리 — 끌어서 당기는 힘 바꾸기`, 'aria-valuemin': 0, 'aria-valuemax': B_FMAX, 'aria-valuenow': f1b(F), 'aria-valuetext': `${f1b(F)} N`, 'data-noexport': '' }, grip);
+  el('circle', { cx: ring, cy: B_Y, r: 4.2, class: 'b-ring' }, grip);
+  bindRing(hit, side < 0 ? 'L' : 'R');
+}
+let pxuB = 3;
+function arrowB(g, x, y, dx, cls, hcls) {
+  const L = Math.abs(dx); if (L < .5) return;
+  const s = Math.sign(dx), hd = Math.min(5, L * .5);
+  el('line', { x1: x, y1: y, x2: x + dx - s * hd, y2: y, class: cls }, g);
+  el('path', { d: `M${x + dx} ${y}L${x + dx - s * hd} ${y - 2.8}L${x + dx - s * hd} ${y + 2.8}Z`, class: hcls }, g);
+}
+function renderB() {
+  const sc = $('#bScales'); sc.innerHTML = '';
+  scaleG(sc, -1, bclip.xL, bclip.x); scaleG(sc, 1, bclip.xR, bclip.x);
+  const c = $('#bClip'); c.innerHTML = '';
+  const cp = x => `M${x - 7} ${B_Y - 3}h12a3 3 0 0 1 0 6h-12a3 3 0 0 1 0-6M${x - 4.5} ${B_Y - 1.4}h8a1.4 1.4 0 0 1 0 2.8h-8`;
+  el('path', { d: cp(bclip.x + .5), class: 'b-clip-sh', transform: 'translate(0 .8)' }, c);
+  el('path', { d: cp(bclip.x), class: 'b-clip' }, c);
+  if (bclip.pinned) { el('ellipse', { cx: bclip.x, cy: B_Y, rx: 6.5, ry: 8, class: 'b-pin' }, c); el('text', { x: bclip.x, y: B_Y - 22, class: 'b-pin-t' }, c).textContent = '손가락으로 누르는 중'; }
+  const gh = $('#bGhost'); gh.innerHTML = '';
+  if (bclip.start != null && Math.abs(bclip.start - bclip.x) > .6) el('path', { d: cp(bclip.start), class: 'b-ghost' }, gh);
+  const f = bForce(), fg = $('#bForces'); fg.innerHTML = '';
+  // 두 힘: 작용점(클립)에서 시작해 저울 막대를 따라 — 힘의 3요소 그대로
+  arrowB(fg, bclip.x, B_Y, -f.L * B_FA, 'b-f', 'b-fh'); arrowB(fg, bclip.x, B_Y, f.R * B_FA, 'b-f', 'b-fh');
+  if (f.L > .05) el('text', { x: bclip.x - f.L * B_FA / 2 - 3, y: B_Y - 9, class: 'b-ft', 'text-anchor': 'middle' }, fg).textContent = `${f1b(f.L)} N`;
+  if (f.R > .05) el('text', { x: bclip.x + f.R * B_FA / 2 + 3, y: B_Y - 9, class: 'b-ft', 'text-anchor': 'middle' }, fg).textContent = `${f1b(f.R)} N`;
+  el('circle', { cx: bclip.x, cy: B_Y, r: 1.8, class: 'b-fh' }, fg);
+  // 합력: 같은 작용점의 힘을 아래에 따로 그리고 점선으로 잇는다
+  const net = f.R - f.L, yN = B_Y + 26;
+  el('line', { x1: bclip.x, y1: B_Y + 4, x2: bclip.x, y2: yN, class: 'b-lead' }, fg);
+  if (Math.abs(net) >= .05) { arrowB(fg, bclip.x, yN, net * B_FA, 'b-net', 'b-neth'); el('text', { x: bclip.x + net * B_FA / 2, y: yN + 9, class: 'b-nt' }, fg).textContent = `합력 ${f1b(Math.abs(net))} N`; }
+  else el('text', { x: bclip.x, y: yN + 9, class: 'b-nt' }, fg).textContent = '합력 0 N';
+  syncBal();
+}
+const B_STEPS = [
+  { id: 'diff', t: '두 저울을 <b>다른 힘</b>으로 당긴 뒤 클립을 놓아요. 클립은 어느 쪽으로 움직이나요?' },
+  { id: 'same', t: '두 저울을 <b>같은 힘</b>으로 당긴 뒤 클립을 놓아요. 클립은 어떻게 되나요?' },
+  { id: 'stop', t: '움직이던 클립이 <b>멈춘 뒤</b> 두 저울의 눈금을 비교해요.' },
+];
+let bMsg = '';
+function syncBal() {
+  if (mode !== 'bal') return;
+  const f = bForce(), net = f.R - f.L;
+  $('#vFL').textContent = `${f1b(f.L)} N`; $('#vFR').textContent = `${f1b(f.R)} N`;
+  $('#vNet').textContent = f1b(Math.abs(net)); $('#vNetSide').textContent = Math.abs(net) < .05 ? 'N · 평형' : `N · ${net > 0 ? '오른쪽' : '왼쪽'}`;
+  $$('[data-bal]').forEach(b => { const k = b.dataset.bal, v = k[0] === 'L' ? BAL.FL : BAL.FR; b.disabled = !bclip.pinned || (k[1] === '-' ? v <= 0 : v >= B_FMAX); });
+  $('#vBal').innerHTML = bMsg || (bclip.pinned ? '양쪽 저울을 당겨 두고 <b>클립 놓기</b>를 눌러요.' : '');
+  $('#bSteps').innerHTML = B_STEPS.map(s => `<li class="${BAL.steps[s.id] ? 'on' : ''}"><span class="bk">${BAL.steps[s.id] ? icon('check') : ''}</span><span>${s.t}</span></li>`).join('');
+}
+function setBal(side, F) {
+  if (!bclip.pinned) return;
+  F = clamp(Math.round(F * 2) / 2, 0, B_FMAX);
+  if (side === 'L') BAL.FL = F; else BAL.FR = F;
+  bclip.start = null; bMsg = ''; bSetRings(); saveBal(); renderB();
+}
+function bindRing(hit, side) {
+  hit.addEventListener('pointerdown', e => {
+    if (!bclip.pinned) { toast('클립을 다시 누른 뒤 저울을 당길 수 있어요.'); return; }
+    e.preventDefault(); hit.setPointerCapture(e.pointerId); hit.parentNode.classList.add('dragging');
+    const mv = ev => { const p = SS.svgPoint(svgB, ev.clientX, ev.clientY); setBal(side, side === 'L' ? (bclip.x - B_D0 - p.x) / B_U : (p.x - bclip.x - B_D0) / B_U); };
+    const up = () => { hit.removeEventListener('pointermove', mv); hit.removeEventListener('pointerup', up); hit.removeEventListener('pointercancel', up); renderB(); $(`#bScales [data-side="${side}"] .b-hit`)?.focus({ preventScroll: true }); };
+    hit.addEventListener('pointermove', mv); hit.addEventListener('pointerup', up); hit.addEventListener('pointercancel', up);
+  });
+  hit.addEventListener('keydown', e => {
+    const d = { ArrowRight: side === 'R' ? .5 : -.5, ArrowLeft: side === 'R' ? -.5 : .5, ArrowUp: .5, ArrowDown: -.5 }[e.key];
+    if (d == null) return; e.preventDefault(); setBal(side, (side === 'L' ? BAL.FL : BAL.FR) + d);
+    $(`#bScales [data-side="${side}"] .b-hit`)?.focus({ preventScroll: true });
+  });
+}
+function releaseClip() {
+  if (!bclip.pinned) {                      // 다시 누르기: 클립이 멈춘 자리에서 다시 시작
+    bclip.pinned = true; bclip.moving = false; bclip.v = 0;
+    const f = bForce(); BAL.FL = Math.round(f.L * 2) / 2; BAL.FR = Math.round(f.R * 2) / 2; bSetRings();
+    bclip.start = null; bMsg = ''; saveBal(); renderB(); syncRail(); return;
+  }
+  const f = bForce();
+  bclip.pinned = false; bclip.start = bclip.x; bclip.v = 0; bclip.moving = Math.abs(f.R - f.L) > 1e-6;
+  bclip.kind = Math.abs(f.R - f.L) < 1e-6 ? 'same' : 'diff'; bclip.f0 = f;
+  if (bclip.kind === 'same' && f.L > 0) { BAL.steps.same = true; bMsg = `두 저울이 모두 ${f1b(f.L)} N — 클립을 놓아도 <b>움직이지 않아요</b>.`; announce('클립이 움직이지 않아요'); }
+  else if (bclip.kind === 'same') bMsg = '두 저울 모두 0 N이에요. 당긴 뒤 놓아 볼까요?';
+  else { bMsg = `클립이 ${f.R > f.L ? '오른쪽' : '왼쪽'}으로 움직여요…`; }
+  saveBal(); renderB(); syncRail();
+}
+function stepB(dt) {
+  if (bclip.pinned || !bclip.moving) return;
+  const n = Math.max(1, Math.ceil(dt * 480)), h = dt / n;
+  for (let i = 0; i < n; i++) { const f = bForce(); bclip.v += ((f.R - f.L) * B_KA - B_C * bclip.v) * h; bclip.x += bclip.v * h; }
+  const f = bForce();
+  if (Math.abs(bclip.v) < .05 && Math.abs(f.R - f.L) < .01) {
+    bclip.x = (bclip.xL + bclip.xR) / 2; bclip.v = 0; bclip.moving = false;
+    const g = bForce(), mm = bclip.x - bclip.start;
+    BAL.steps.diff = true; BAL.steps.stop = true; saveBal();
+    bMsg = `클립이 ${mm > 0 ? '오른쪽' : '왼쪽'}으로 ${Math.abs(mm).toFixed(0)} mm 움직인 뒤 멈췄어요. 지금 두 저울의 눈금은 모두 <b>${f1b(g.L)} N</b>이에요.`;
+    announce(`클립이 멈췄어요. 두 저울 모두 ${f1b(g.L)} 뉴턴`);
+  }
+  renderB();
+}
+function sizeB() {
+  const r = svgB.getBoundingClientRect(); if (!r.width) return;
+  pxuB = Math.min(r.width / 260, r.height / 150);
+  for (const n of [12, 13]) svgB.style.setProperty(`--t${n}`, `${(n / pxuB).toFixed(2)}px`);
+  svgB.style.setProperty('--h3', `${(3 / pxuB).toFixed(3)}px`);
+  renderB();
+}
+
 /* ═════════ 원리 카드 · 도움말 ═════════ */
 function theory() {
   const last = hist[hist.length - 1];
@@ -1183,8 +1408,8 @@ function theory() {
       <text x="262" y="20" style="fill:var(--text-1);font:700 13px var(--font-ui);text-anchor:middle">머리 = 방향</text>
       <text x="80" y="42" style="fill:var(--text-2);font:500 12px var(--font-ui);text-anchor:middle">물체</text>
     </svg></figure>
-    <p class="def">힘은 화살표로 나타내요. 시작점은 작용점, 길이는 크기, 머리가 가리키는 쪽은 방향이에요.</p>
-    <p>이 세 가지를 <b>힘의 3요소</b>라고 해요. 힘의 크기는 N(뉴턴) 단위로 나타내고, 한 그림 안에서는 같은 길이가 같은 크기를 나타내도록 한 칸의 값을 정해요.</p>
+    <p class="def">힘은 화살표로 나타내요. 화살표의 시작점은 힘의 작용점, 방향은 힘의 방향, 길이는 힘의 크기예요.</p>
+    <p>힘의 작용점·방향·크기를 <b>힘의 3요소</b>라고 해요. 화살표는 작용점에서 시작해 힘이 작용하는 방향으로, 힘의 크기에 비례하는 길이만큼 그려요. 힘의 크기 단위 N(뉴턴)은 영국의 과학자 뉴턴의 이름에서 왔어요.</p>
     <p class="link">이 실험의 화살표도 한 칸이 10 N이에요. ${A.F} N 화살표는 ${A.F / 10}칸 길이예요.</p></article>
   <article class="tcard"><h3>하나만 달라도 효과가 달라져요</h3>
     <figure><svg viewBox="0 0 320 120" role="img" aria-label="같은 크기의 힘이라도 작용점이나 방향이 다르면 문이 열리는 정도가 달라진다">
@@ -1196,25 +1421,65 @@ function theory() {
           <text x="44" y="104" style="fill:var(--text-1);font:700 13px var(--font-ui);text-anchor:middle">${lab} 다름</text></g>`; }).join('')}
     </svg></figure>
     <p class="def">크기·방향·작용점 가운데 하나만 달라도 힘이 물체에 주는 효과가 달라져요.</p>
-    <p>문 손잡이가 경첩에서 먼 쪽에 달린 것도 이 때문이에요. 같은 힘이라도 문 끝을 문에 수직으로 밀어야 문이 잘 열려요.</p>
-    <p class="link">${last ? `방금 ${last.A.F} N · ${pointText(last.A)} · ${dirInfo(last.A).text.split(' · ')[0]}로 밀었을 때 문이 ${peakText(last.peak).v} 열렸어요. 요소 하나만 바꿔 비교해 보세요.` : '실험에서 요소 하나만 바꿔 가며 문을 밀어 보면 차이가 보여요.'}</p></article>`;
+    <p>그래서 로봇에게 문을 열라고 시킬 때도 어디를(작용점), 어느 쪽으로(방향), 얼마나 세게(크기) 밀지를 모두 알려 줘야 해요. 문 손잡이가 경첩에서 먼 쪽에 달린 것도 이 때문이에요.</p>
+    <p class="link">${last ? `방금 ${last.A.F} N · ${pointText(last.A)} · ${dirInfo(last.A).text.split(' · ')[0]}로 밀었을 때 문이 ${peakText(last.peak).v} 열렸어요. 요소 하나만 바꿔 비교해 보세요.` : '실험에서 요소 하나만 바꿔 가며 문을 밀어 보면 차이가 보여요.'}</p></article>
+  <article class="tcard"><h3>과학에서 말하는 힘</h3>
+    <figure><svg viewBox="0 0 300 92" role="img" aria-label="점토를 누르면 모양이 변하고, 방망이로 친 공은 속력과 운동 방향이 변한다">
+      <rect width="300" height="92" style="fill:var(--stage)"/>
+      <path d="M22 70h96" style="stroke:var(--text-2);stroke-width:2"/><path d="M34 70c0-12 10-16 36-16s36 4 36 16Z" style="fill:var(--wood)"/>
+      <line x1="70" y1="14" x2="70" y2="42" style="stroke:var(--force);stroke-width:3.4"/><path d="M70 52 63 40h14Z" style="fill:var(--force)"/>
+      <text x="70" y="86" style="fill:var(--text-1);font:700 12px var(--font-ui);text-anchor:middle">모양이 변해요</text>
+      ${[0, 1, 2, 3].map(i => `<circle cx="${170 + i * 14}" cy="${30 + i * 3}" r="3" style="fill:var(--text-3)"/>`).join('')}
+      ${[0, 1, 2].map(i => `<circle cx="${226 - i * 22}" cy="${44 - i * 12}" r="3" style="fill:var(--force)"/>`).join('')}
+      <circle cx="226" cy="44" r="7" style="fill:var(--metal-hi);stroke:var(--metal-lo)"/><path d="M236 70 250 34" style="stroke:var(--wood);stroke-width:6;stroke-linecap:round"/>
+      <text x="215" y="86" style="fill:var(--text-1);font:700 12px var(--font-ui);text-anchor:middle">운동 상태가 변해요</text>
+    </svg></figure>
+    <p class="def">과학에서 힘은 물체의 모양이나 운동 상태(속력·운동 방향)를 변하게 하는 원인이에요.</p>
+    <p>‘힘을 내!’, ‘응원이 힘이 됐어’처럼 일상에서 쓰는 힘과는 달라요. 점토나 밀가루 반죽을 누르면 모양이 변하고, 방망이로 친 야구공은 빠르기와 방향이 변해요. 축구공을 차면 둘 다 변해요.</p>
+    <p class="link">실험에서 멈춰 있던 문이 열리는 것도 힘이 문의 운동 상태를 바꾼 것이에요.</p></article>
+  <article class="tcard"><h3>나란한 두 힘 — 합력과 평형</h3>
+    <figure><svg viewBox="0 0 300 132" role="img" aria-label="같은 방향 30 N과 15 N의 합력은 45 N, 반대 방향이면 15 N, 같은 크기로 반대 방향이면 0 N">
+      <rect width="300" height="132" style="fill:var(--stage)"/>
+      ${[[22, [[30, 1], [15, 1]], '같은 방향: 30 N + 15 N = 45 N'], [64, [[30, 1], [15, -1]], '반대 방향: 30 N − 15 N = 15 N'], [106, [[20, 1], [20, -1]], '같은 크기·반대 방향: 0 N (평형)']].map(([y, fs, t]) => `<rect x="130" y="${y - 9}" width="18" height="18" rx="3" style="fill:var(--wood);stroke:var(--wood-lo)"/>
+        ${fs.map(([f, d], k) => { const x0 = d > 0 ? 148 : 130, L = f * 2.6, x1 = x0 + d * L, yy = y + (k ? 5 : -5) * (fs[0][1] === fs[1][1] ? 1 : 0); return `<line x1="${x0}" y1="${yy}" x2="${x1 - d * 7}" y2="${yy}" style="stroke:var(--force);stroke-width:3;opacity:${k ? .6 : 1}"/><path d="M${x1} ${yy} ${x1 - d * 8} ${yy - 5}v10Z" style="fill:var(--force);opacity:${k ? .6 : 1}"/>`; }).join('')}
+        <text x="8" y="${y + 24}" style="fill:var(--text-1);font:700 11.5px var(--font-ui)">${t}</text>`).join('')}
+    </svg></figure>
+    <p class="def">한 물체에 여러 힘이 작용할 때 그 힘들과 같은 효과를 내는 하나의 힘을 합력(알짜힘)이라고 해요.</p>
+    <p>같은 방향이면 두 힘의 크기를 더하고, 반대 방향이면 큰 힘에서 작은 힘을 빼며 합력은 큰 힘 쪽을 향해요. 크기가 같은 두 힘이 일직선에서 반대 방향으로 작용하면 합력이 0이 되어 힘의 평형을 이뤄요. 줄다리기에서 줄이 움직이지 않을 때가 그래요.</p>
+    <p class="link">${BAL.steps.stop ? '‘두 힘의 평형’에서 클립은 두 저울의 눈금이 같아진 곳에서 멈췄어요. 그때 합력이 0이에요.' : '‘두 힘의 평형’에서 용수철저울 두 개로 클립을 당겨 직접 확인해 보세요.'}</p></article>
+  <article class="tcard"><h3>교과서에서는</h3>
+    <p class="def">세 교과서 모두 ‘힘을 화살표로 나타내기’와 ‘나란한 두 힘의 평형’을 함께 배워요.</p>
+    <ul class="tb-list">
+      <li><b>천재</b> 152~155쪽 — 교실 물건을 옮기는 힘을 힘 화살표 붙임 딱지로 나타내기, 로봇이 문을 열게 하려면?, 용수철저울 2개로 클립을 당겨 힘의 평형 만들기</li>
+      <li><b>동아</b> 145~149쪽 — 과학에서 말하는 ‘힘’ 찾기, 축구공을 차는 힘 그리기, 가상 실험으로 두 힘이 평형을 이루는 조건 찾기</li>
+      <li><b>비상</b> 158~162쪽 — 일상에서 경험한 힘을 글과 그림으로 표현하기, 합력이 0이 되는 조건 찾기(고리 자석)</li>
+    </ul>
+    <p class="link">이 실험실은 천재 교과서의 ‘문을 당길까, 밀까?’처럼 문에 힘 화살표를 직접 그려 세 요소를 하나씩 바꿔 봐요.</p></article>`;
 }
 const HELP = {
   how: `<ol><li>화살표 끝 <b>▶</b>을 끌면 힘의 <b>크기</b>(길이)와 <b>방향</b>이, 시작점 <b>●</b>을 끌면 <b>작용점</b>이 바뀌어요. 문을 누르면 그 자리가 작용점이 돼요. 오른쪽 줄의 단추로도 바꿀 수 있어요.</li>
     <li><b>문 밀기</b>를 누르면 그 힘으로 문을 0.4초 동안 밀어요. 문이 열렸다 스스로 닫히고, 가장 크게 열린 각도가 각도기에 남아요.</li>
     <li>요소 <b>하나만</b> 바꿔 다시 밀고, 점선으로 남은 <b>직전 결과</b>와 비교해요.</li>
-    <li><b>문 퍼즐</b>에서 세 문제를 풀어 봐요.</li></ol>`,
+    <li><b>문 퍼즐</b>에서 세 문제를 풀어 봐요.</li>
+    <li><b>두 힘의 평형</b>(천재 154쪽 탐구) — 클립을 손가락으로 누른 채 양쪽 용수철저울의 고리를 끌거나 ＋/− 단추로 당기는 힘을 정해요. <b>클립 놓기</b>를 누르면 클립이 어느 쪽으로 움직이는지, 어디서 멈추는지 보세요.</li></ol>`,
   keys: '화살표 머리(▶)에 포커스: <kbd>↑</kbd><kbd>↓</kbd> 크기 5 N · <kbd>←</kbd><kbd>→</kbd> 방향 15° · 시작점(●)에 포커스: <kbd>←</kbd><kbd>→</kbd> 작용점 5 cm · <kbd>Enter</kbd> 문 밀기',
   model: `<ul><li>위에서 내려다본 <b>스윙 도어</b>(양쪽으로 열리는 문)예요. 폭 90 cm, 질량 6 kg이고 한쪽 끝의 바닥 경첩을 축으로 돌아요. 경첩 속 용수철이 문을 다시 닫아요.</li>
     <li>힘은 0.4초 동안 같은 크기·같은 방향으로 작용한다고 가정했어요. 크기는 5 N, 방향은 15°, 작용점은 5 cm 간격으로 골라요.</li>
     <li>화살표 길이는 힘의 크기를 나타내요(한 칸 = 10 N). 문 그림의 길이(cm)와는 다른 눈금이에요.</li>
-    <li>문이 열리는 각도는 힘의 크기, 경첩에서 작용점까지의 거리, 문과 이루는 방향으로 계산한 모형 값이에요. 실제 문은 무게와 경첩에 따라 값이 달라요.</li></ul>`,
-  source: '<p>2022 개정 중학교 과학 ‘힘의 작용’ — [9과05-01] 물체에 작용하는 힘을 화살표를 이용하여 나타내고, 힘의 평형을 이루는 조건을 설명할 수 있다. 교과서에서 흔히 쓰는 ‘문 밀기’ 예시를 직접 해 보는 실험으로 바꿨어요. 이전 판(세 칸 인포그래픽)을 한 장면으로 다시 만들었어요.</p>',
-  wipe: '화살표 설정, 직전 결과, 문 퍼즐 진행',
+    <li>문이 열리는 각도는 힘의 크기, 경첩에서 작용점까지의 거리, 문과 이루는 방향으로 계산한 모형 값이에요. 실제 문은 무게와 경첩에 따라 값이 달라요.</li>
+    <li>두 힘의 평형: 용수철저울은 1 N마다 6 mm 늘어나고, 양쪽 고리는 손으로 잡고 있어 움직이지 않아요. 클립과 책상 사이의 마찰은 없다고 보았어요. 그래서 클립은 두 저울의 힘이 같아지는 곳(가운데)까지 움직여 멈춰요.</li></ul>`,
+  source: '<p>2022 개정 중학교 과학 ‘힘의 작용’ — [9과05-01] 물체에 작용하는 힘을 화살표를 이용하여 나타내고, 힘의 평형을 이루는 조건을 설명할 수 있다.</p><p>교과서: 천재교육(임성숙) 중학교 과학 1 152~155쪽, 동아출판 145~149쪽, 비상교육 158~162쪽의 정의·용어(힘의 작용점·방향·크기, 합력·알짜힘, 힘의 평형)와 예를 따랐고, 천재 교과서의 ‘문을 당길까, 밀까?’ 활동을 직접 해 보는 실험으로 만들었어요. 그림은 교과서를 복사하지 않고 새로 그렸어요. 이전 판(세 칸 인포그래픽)을 한 장면으로 다시 만들었어요.</p>',
+  wipe: '화살표 설정, 직전 결과, 문 퍼즐 진행, 두 힘의 평형 설정',
 };
 
 /* ═════════ 이벤트 · 시작 ═════════ */
 function capture() {
+  if (mode === 'bal') {
+    const f = bForce(), net = f.R - f.L;
+    return { svg: svgB, flashEl: $('#stage'), title: '힘의 3요소 — 두 힘의 평형',
+      cond: `용수철저울 2개로 클립 당기기 · ${bclip.pinned ? '클립을 누르는 중' : '클립을 놓음'}${bclip.f0 && !bclip.pinned ? ` · 놓기 전 왼쪽 ${f1b(bclip.f0.L)} N, 오른쪽 ${f1b(bclip.f0.R)} N` : ''}`,
+      state: `지금 왼쪽 ${f1b(f.L)} N · 오른쪽 ${f1b(f.R)} N → 합력 ${f1b(Math.abs(net))} N${Math.abs(net) < .05 ? '(평형)' : net > 0 ? '(오른쪽)' : '(왼쪽)'}` };
+  }
   const last = hist[hist.length - 1];
   return {
     svg, flashEl: $('#stage'),
@@ -1229,13 +1494,16 @@ function bind() {
   $('[data-act="mag-"]').innerHTML = icon('minus'); $('[data-act="mag+"]').innerHTML = icon('plus');
   $('[data-act="dir+"]').innerHTML = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12a7 7 0 1 0 2-5"/><path d="M5 3.5V8h4.5"/></svg>';
   $('[data-act="dir-"]').innerHTML = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2-5"/><path d="M19 3.5V8h-4.5"/></svg>';
-  $('#pushBtn').addEventListener('click', push);
+  $('#pushBtn').addEventListener('click', () => mode === 'bal' ? releaseClip() : push());
+  $('#balRail').addEventListener('click', e => { const b = e.target.closest('[data-bal]'); if (!b || b.disabled) return; const k = b.dataset.bal; setBal(k[0], (k[0] === 'L' ? BAL.FL : BAL.FR) + (k[1] === '+' ? .5 : -.5)); });
+  $$('[data-bal$="-"]').forEach(b => b.innerHTML = icon('minus')); $$('[data-bal$="+"]').forEach(b => b.innerHTML = icon('plus'));
   $('#resetBtn').addEventListener('click', () => {
+    if (mode === 'bal') { BAL = { FL: 2, FR: 4, steps: BAL.steps }; bclip.x = B_XC; bclip.v = 0; bclip.pinned = true; bclip.moving = false; bclip.start = null; bMsg = ''; bSetRings(); saveBal(); renderB(); syncRail(); announce('저울과 클립을 처음 상태로 돌렸어요'); return; }
     A = A0(); hist = []; door.th = 0; door.om = 0; door.running = false; door.reported = true; fb = null;
     save(); syncRail(); renderResult(); renderGoal(); render(); announce('화살표를 처음 상태로 돌렸어요. 퍼즐 진행은 그대로예요.');
   });
   $('#ghostTog').addEventListener('click', () => { showGhost = !showGhost; save(); syncRail(); render(); });
-  $('#modeSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; mode = b.dataset.v; fb = null; save(); syncRail(); renderGoal(); });
+  $('#modeSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; mode = b.dataset.v; fb = null; save(); syncRail(); renderGoal(); if (mode === 'bal') sizeB(); else sizeText(); });
   $('#lab').addEventListener('click', e => {
     const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
     const a = b.dataset.act;
@@ -1257,13 +1525,14 @@ buildStatic(); bind();
 SS.init({
   id: 'three-force', title: '힘의 3요소', file: '힘의3요소', version: APP_VERSION, date: APP_DATE,
   help: HELP, theory, capture,
-  onResize: sizeText,
-  onKey: e => { if (e.key === 'Enter' && e.target === document.body) { e.preventDefault(); push(); } },
-  onWipe: () => { A = A0(); hist = []; mode = 'free'; solved = [false, false, false]; qi = 0; fb = null; showGhost = true; door.th = 0; door.om = 0; door.running = false; door.reported = true; syncRail(); renderResult(); renderGoal(); render(); },
+  onResize: () => { sizeText(); sizeB(); },
+  onKey: e => { if (e.key === 'Enter' && e.target === document.body) { e.preventDefault(); mode === 'bal' ? releaseClip() : push(); } },
+  onWipe: () => { BAL = { FL: 2, FR: 4, steps: {} }; bclip.x = B_XC; bclip.v = 0; bclip.pinned = true; bclip.moving = false; bclip.start = null; bMsg = ''; bSetRings(); A = A0(); hist = []; mode = 'free'; solved = [false, false, false]; qi = 0; fb = null; showGhost = true; door.th = 0; door.om = 0; door.running = false; door.reported = true; syncRail(); renderResult(); renderGoal(); render(); },
 });
 syncRail(); renderResult(); renderGoal(); sizeText();
-SS.loop(step);
-window.ThreeForce = { A, door, hist: () => hist, push, step, setA, render, PUZ, state: () => ({ A, door: { ...door }, hist, mode, solved, qi }) };
+buildB(); sizeB();
+SS.loop(dt => { step(dt); stepB(dt); });
+window.ThreeForce = { bal: { setBal, releaseClip, stepB, state: () => ({ BAL, bclip: { ...bclip }, f: bForce() }) }, A, door, hist: () => hist, push, step, setA, render, PUZ, state: () => ({ A, door: { ...door }, hist, mode, solved, qi }) };
 
 </script>
 </body>
